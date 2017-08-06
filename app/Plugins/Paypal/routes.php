@@ -1,5 +1,4 @@
 <?php
-
 \Event::listen('App\Events\PaymentGateway', function ($event) {
     $controller = new App\Plugins\Paypal\Controllers\ProcessController();
     echo $controller->PassToPayment($event->para);

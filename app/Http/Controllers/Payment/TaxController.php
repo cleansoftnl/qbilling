@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
@@ -23,19 +22,14 @@ class TaxController extends Controller
     {
         $this->middleware('auth', ['except' => 'GetState']);
         $this->middleware('admin', ['except' => 'GetState']);
-
         $tax = new Tax();
         $this->tax = $tax;
-
         $country = new Country();
         $this->country = $country;
-
         $state = new State();
         $this->state = $state;
-
         $tax_option = new TaxOption();
         $this->tax_option = $tax_option;
-
         $tax_class = new TaxClass();
         $this->tax_class = $tax_class;
     }
@@ -56,7 +50,6 @@ class TaxController extends Controller
             if (count($classes) == 0) {
                 $classes = $this->tax_class->get();
             }
-
             return view('themes.default1.payment.tax.index', compact('options', 'classes'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -66,30 +59,30 @@ class TaxController extends Controller
     public function GetTax()
     {
         return \Datatable::collection($this->tax->select('id', 'name', 'level', 'country', 'state', 'rate', 'tax_classes_id')->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->addColumn('tax_classes_id', function ($model) {
-                            return ucfirst($this->tax_class->where('id', $model->tax_classes_id)->first()->name);
-                        })
-                        ->showColumns('name', 'level')
-                        ->addColumn('country', function ($model) {
-                            if ($this->country->where('country_code_char2', $model->country)->first()) {
-                                return $this->country->where('country_code_char2', $model->country)->first()->country_name;
-                            }
-                        })
-                        ->addColumn('state', function ($model) {
-                            if ($this->state->where('state_subdivision_code', $model->state)->first()) {
-                                return $this->state->where('state_subdivision_code', $model->state)->first()->state_subdivision_name;
-                            }
-                        })
-                        ->showColumns('rate')
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('tax/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name')
-                        ->orderColumns('name')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->addColumn('tax_classes_id', function ($model) {
+                return ucfirst($this->tax_class->where('id', $model->tax_classes_id)->first()->name);
+            })
+            ->showColumns('name', 'level')
+            ->addColumn('country', function ($model) {
+                if ($this->country->where('country_code_char2', $model->country)->first()) {
+                    return $this->country->where('country_code_char2', $model->country)->first()->country_name;
+                }
+            })
+            ->addColumn('state', function ($model) {
+                if ($this->state->where('state_subdivision_code', $model->state)->first()) {
+                    return $this->state->where('state_subdivision_code', $model->state)->first()->state_subdivision_name;
+                }
+            })
+            ->showColumns('rate')
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('tax/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name')
+            ->orderColumns('name')
+            ->make();
     }
 
     /**
@@ -111,7 +104,6 @@ class TaxController extends Controller
     {
         try {
             $this->tax->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -144,11 +136,9 @@ class TaxController extends Controller
             $classes = $this->tax_class->lists('name', 'id')->toArray();
             $state = \App\Http\Controllers\Front\CartController::getStateByCode($tax->state);
             $states = \App\Http\Controllers\Front\CartController::findStateByRegionId($tax->country);
-
             if (count($classes) == 0) {
                 $classes = $this->tax_class->get();
             }
-
             return view('themes.default1.payment.tax.edit', compact('tax', 'classes', 'states', 'state'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -167,7 +157,6 @@ class TaxController extends Controller
         try {
             $tax = $this->tax->where('id', $id)->first();
             $tax->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -193,34 +182,34 @@ class TaxController extends Controller
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                         //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                     }
                 }
                 echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
                 //echo \Lang::get('message.select-a-row');
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }
@@ -229,12 +218,11 @@ class TaxController extends Controller
     {
         try {
             $id = $request->input('country_id');
-
             $states = \App\Model\Common\State::where('country_code_char2', $id)->get();
             //return $states;
             echo '<option value=>Select State</option>';
             foreach ($states as $state) {
-                echo '<option value='.$state->state_subdivision_code.'>'.$state->state_subdivision_name.'</option>';
+                echo '<option value=' . $state->state_subdivision_code . '>' . $state->state_subdivision_name . '</option>';
             }
         } catch (\Exception $ex) {
             echo "<option value=''>Problem while loading</option>";
@@ -262,7 +250,6 @@ class TaxController extends Controller
                 }
                 $this->tax_class->fill($request->input())->save();
             }
-
             return redirect()->back()->with('success', \Lang::get('message.created-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());

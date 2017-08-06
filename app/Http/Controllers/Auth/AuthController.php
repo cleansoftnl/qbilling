@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -22,23 +21,19 @@ class AuthController extends Controller
       | a simple trait to add these behaviors. Why don't you explore it?
       |
      */
-
-use AuthenticatesAndRegistersUsers;
+    use AuthenticatesAndRegistersUsers;
 
     /* to redirect after login */
-
     //protected $redirectTo = 'home';
-
     /* Direct After Logout */
     protected $redirectAfterLogout = 'home';
     protected $loginPath = 'auth/login';
 
     //protected $loginPath = 'login';
-
     /**
      * Create a new authentication controller instance.
      *
-     * @param \Illuminate\Contracts\Auth\Guard     $auth
+     * @param \Illuminate\Contracts\Auth\Guard $auth
      * @param \Illuminate\Contracts\Auth\Registrar $registrar
      *
      * @return void
@@ -52,7 +47,6 @@ use AuthenticatesAndRegistersUsers;
     {
         try {
             $bussinesses = \App\Model\Common\Bussiness::lists('name', 'short')->toArray();
-
             return view('themes.default1.front.auth.login-register', compact('bussinesses'));
         } catch (\Exception $ex) {
             //dd($ex);
@@ -71,8 +65,8 @@ use AuthenticatesAndRegistersUsers;
     {
         $this->validate($request, [
             'email1' => 'required', 'password1' => 'required',
-                ], [
-            'email1.required'    => 'Username/Email is required',
+        ], [
+            'email1.required' => 'Username/Email is required',
             'password1.required' => 'Password is required',
         ]);
         $usernameinput = $request->input('email1');
@@ -80,24 +74,20 @@ use AuthenticatesAndRegistersUsers;
         $field = filter_var($usernameinput, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
         $password = $request->input('password1');
         $credentials = [$field => $usernameinput, 'password' => $password, 'active' => 1, 'mobile_verified' => 1];
-
         //$credentials = $request->only('email', 'password');
         $auth = \Auth::attempt($credentials, $request->has('remember'));
-
         if ($auth) {
             return redirect()->intended($this->redirectPath());
         }
-
         $user = User::where('email', $usernameinput)->orWhere('user_name', $usernameinput)->first();
         if ($user && ($user->active !== '1' || $user->mobile_verified !== '1')) {
             return redirect('verify')->with('user', $user);
         }
-
         return redirect()->back()
-                        ->withInput($request->only('email1', 'remember'))
-                        ->withErrors([
-                            'email1' => 'Invalid Email and/or Password',
-        ]);
+            ->withInput($request->only('email1', 'remember'))
+            ->withErrors([
+                'email1' => 'Invalid Email and/or Password',
+            ]);
     }
 
     /**
@@ -194,7 +184,7 @@ use AuthenticatesAndRegistersUsers;
             $to = $user->email;
             $subject = $template->name;
             $data = $template->data;
-            $replace = ['name' => $user->first_name.' '.$user->last_name, 'username' => $user->email, 'password' => $str, 'url' => $url];
+            $replace = ['name' => $user->first_name . ' ' . $user->last_name, 'username' => $user->email, 'password' => $str, 'url' => $url];
             $type = '';
             if ($template) {
                 $type_id = $template->type;
@@ -204,7 +194,6 @@ use AuthenticatesAndRegistersUsers;
             //dd($type);
             $templateController = new \App\Http\Controllers\Common\TemplateController();
             $mail = $templateController->mailing($from, $to, $data, $subject, $replace, $type);
-
             return $mail;
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage());
@@ -225,15 +214,12 @@ use AuthenticatesAndRegistersUsers;
             if ($user->where('email', $email)->first()) {
                 $user->active = 1;
                 $user->save();
-
                 $mailchimp = new \App\Http\Controllers\Common\MailChimpController();
                 $r = $mailchimp->addSubscriber($user->email);
                 if (\Session::has('session-url')) {
                     $url = \Session::get('session-url');
-
                     return redirect($url);
                 }
-
                 return redirect($url)->with('success', 'Email verification successful, Please login to access your account');
             } else {
                 throw new NotFoundHttpException();
@@ -241,10 +227,8 @@ use AuthenticatesAndRegistersUsers;
         } catch (\Exception $ex) {
             if ($ex->getCode() == 400) {
                 return redirect($url)->with('success', 'Email verification successful, Please login to access your account');
-
                 return redirect($url);
             }
-
             return redirect($url)->with('fails', $ex->getMessage());
         }
     }
@@ -259,9 +243,9 @@ use AuthenticatesAndRegistersUsers;
     public function validator(array $data)
     {
         return Validator::make($data, [
-                    'name'     => 'required|max:255',
-                    'email'    => 'required|email|max:255|unique:users',
-                    'password' => 'required|confirmed|min:6',
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|confirmed|min:6',
         ]);
     }
 
@@ -275,9 +259,9 @@ use AuthenticatesAndRegistersUsers;
     public function create(array $data)
     {
         return User::create([
-                    'name'     => $data['name'],
-                    'email'    => $data['email'],
-                    'password' => bcrypt($data['password']),
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
         ]);
     }
 
@@ -290,8 +274,7 @@ use AuthenticatesAndRegistersUsers;
     {
         if (\Session::has('session-url')) {
             $url = \Session::get('session-url');
-
-            return property_exists($this, 'redirectTo') ? $this->redirectTo : '/'.$url;
+            return property_exists($this, 'redirectTo') ? $this->redirectTo : '/' . $url;
         } else {
             return property_exists($this, 'redirectTo') ? $this->redirectTo : '/home';
         }
@@ -300,7 +283,7 @@ use AuthenticatesAndRegistersUsers;
     public function sendOtp($mobile, $code)
     {
         $client = new \GuzzleHttp\Client();
-        $number = $code.$mobile;
+        $number = $code . $mobile;
         $response = $client->request('GET', 'https://control.msg91.com/api/sendotp.php', [
             'query' => ['authkey' => '54870AO9t5ZB1IEY5913f8e2', 'mobile' => $number],
         ]);
@@ -309,28 +292,25 @@ use AuthenticatesAndRegistersUsers;
         if ($array['type'] == 'error') {
             throw new \Exception($array['message']);
         }
-
         return $array['type'];
     }
 
     public function requestOtp(Request $request)
     {
         $this->validate($request, [
-            'code'   => 'required|numeric',
+            'code' => 'required|numeric',
             'mobile' => 'required|numeric',
         ]);
         try {
             $code = $request->input('code');
             $mobile = $request->input('mobile');
             $userid = $request->input('id');
-            $number = $code.$mobile;
+            $number = $code . $mobile;
             $result = $this->sendOtp($mobile, $code);
-            $response = ['type' => $result, 'user_id' => $userid, 'message' => 'OTP has been sent to '.$number];
-
+            $response = ['type' => $result, 'user_id' => $userid, 'message' => 'OTP has been sent to ' . $number];
             return response()->json($response);
         } catch (\Exception $ex) {
             $result = [$ex->getMessage()];
-
             return response()->json(compact('result'), 500);
         }
     }
@@ -338,11 +318,10 @@ use AuthenticatesAndRegistersUsers;
     public function verifyOtp($mobile, $code, $otp)
     {
         $client = new \GuzzleHttp\Client();
-        $number = $code.$mobile;
+        $number = $code . $mobile;
         $response = $client->request('GET', 'https://control.msg91.com/api/verifyRequestOTP.php', [
             'query' => ['authkey' => '54870AO9t5ZB1IEY5913f8e2', 'mobile' => $number, 'otp' => $otp],
         ]);
-
         return $response->getBody()->getContents();
     }
 
@@ -361,7 +340,6 @@ use AuthenticatesAndRegistersUsers;
             if ($array['type'] == 'error') {
                 throw new \Exception($array['message']);
             }
-
             $user = User::find($userid);
             if ($user) {
                 $user->mobile = $mobile;
@@ -371,11 +349,9 @@ use AuthenticatesAndRegistersUsers;
             }
             $check = $this->checkVerify($user);
             $response = ['type' => 'success', 'proceed' => $check, 'user_id' => $userid, 'message' => 'mobile verified'];
-
             return response()->json($response);
         } catch (\Exception $ex) {
             $result = [$ex->getMessage()];
-
             return response()->json(compact('result'), 500);
         }
     }
@@ -391,12 +367,10 @@ use AuthenticatesAndRegistersUsers;
             $user = User::find($userid);
             $check = $this->checkVerify($user);
             $this->sendActivation($email, $request->method());
-            $response = ['type' => 'success', 'proceed' => $check, 'email' => $email, 'message' => 'Activation link has been sent to '.$email];
-
+            $response = ['type' => 'success', 'proceed' => $check, 'email' => $email, 'message' => 'Activation link has been sent to ' . $email];
             return response()->json($response);
         } catch (\Exception $ex) {
             $result = [$ex->getMessage()];
-
             return response()->json(compact('result'), 500);
         }
     }
@@ -408,7 +382,6 @@ use AuthenticatesAndRegistersUsers;
             \Auth::login($user);
             $check = true;
         }
-
         return $check;
     }
 
@@ -417,22 +390,21 @@ use AuthenticatesAndRegistersUsers;
         $manager = '';
         $users = new User();
         $account_count = $users->select(\DB::raw("count('manager') as count"), 'manager')
-                ->whereNotNull('manager')
-                ->groupBy('manager')
-                ->pluck('count', 'manager')
-                ->toArray();
+            ->whereNotNull('manager')
+            ->groupBy('manager')
+            ->pluck('count', 'manager')
+            ->toArray();
         if ($account_count) {
             $manager = array_keys($account_count, min($account_count))[0];
         }
-
         return $manager;
     }
 
     public function accountManagerMail($user)
     {
         $manager = $user->manager()
-                ->select('first_name', 'last_name', 'email', 'mobile_code', 'mobile', 'skype')
-                ->first();
+            ->select('first_name', 'last_name', 'email', 'mobile_code', 'mobile', 'skype')
+            ->first();
         if ($user && $user->role == 'user' && $manager) {
             $settings = new \App\Model\Common\Setting();
             $setting = $settings->first();
@@ -440,21 +412,21 @@ use AuthenticatesAndRegistersUsers;
             $to = $user->email;
             $templates = new \App\Model\Common\Template();
             $template = $templates
-                    ->join('template_types', 'templates.type', '=', 'template_types.id')
-                    ->where('template_types.name', '=', 'manager_email')
-                    ->select('templates.data', 'templates.name')
-                    ->first();
+                ->join('template_types', 'templates.type', '=', 'template_types.id')
+                ->where('template_types.name', '=', 'manager_email')
+                ->select('templates.data', 'templates.name')
+                ->first();
             $template_data = $template->data;
             $template_name = $template->name;
             $template_controller = new \App\Http\Controllers\Common\TemplateController();
             $replace = [
-                'name'               => $user->first_name.' '.$user->last_name,
+                'name' => $user->first_name . ' ' . $user->last_name,
                 'manager_first_name' => $manager->first_name,
-                'manager_last_name'  => $manager->last_name,
-                'manager_email'      => $manager->email,
-                'manager_code'       => $manager->mobile_code,
-                'manager_mobile'     => $manager->mobile,
-                'manager_skype'      => $manager->skype,
+                'manager_last_name' => $manager->last_name,
+                'manager_email' => $manager->email,
+                'manager_code' => $manager->mobile_code,
+                'manager_mobile' => $manager->mobile,
+                'manager_skype' => $manager->skype,
             ];
             //dd($from, $to, $template_data, $template_name, $replace);
             $template_controller->mailing($from, $to, $template_data, $template_name, $replace, 'manager_email');

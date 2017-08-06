@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
@@ -32,34 +31,24 @@ class ProductController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('admin', ['except' => ['userDownload']]);
-
         $product = new Product();
         $this->product = $product;
-
         $price = new Price();
         $this->price = $price;
-
         $type = new Type();
         $this->type = $type;
-
         $subscription = new Subscription();
         $this->subscription = $subscription;
-
         $currency = new Currency();
         $this->currency = $currency;
-
         $group = new ProductGroup();
         $this->group = $group;
-
         $plan = new Plan();
         $this->plan = $plan;
-
         $tax = new Tax();
         $this->tax = $tax;
-
         $tax_relation = new TaxProductRelation();
         $this->tax_relation = $tax_relation;
-
         $tax_class = new TaxClass();
         $this->tax_class = $tax_class;
     }
@@ -80,59 +69,57 @@ class ProductController extends Controller
 
     public function GetProducts()
     {
-
         // try {
         return \Datatable::collection($this->product->select('id', 'name', 'type', 'group')->where('id', '!=', 1)->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->addColumn('name', function ($model) {
-                            return ucfirst($model->name);
-                        })
-                        ->addColumn('type', function ($model) {
-                            //dd($model->type());
-                            if ($this->type->where('id', $model->type)->first()) {
-                                return $this->type->where('id', $model->type)->first()->name;
-                            } else {
-                                return 'Not available';
-                            }
-                        })
-                        ->addColumn('group', function ($model) {
-                            //dd($model->type());
-                            if ($this->group->where('id', $model->group)->first()) {
-                                return $this->group->where('id', $model->group)->first()->name;
-                            } else {
-                                return 'Not available';
-                            }
-                        })
-                        ->addColumn('price', function ($model) {
-                            if ($this->price->where('product_id', $model->id)->first()) {
-                                return $this->price->where('product_id', $model->id)->first()->price;
-                            } else {
-                                return 'Not available';
-                            }
-                        })
-                        ->addColumn('currency', function ($model) {
-                            if ($this->price->where('product_id', $model->id)->first()) {
-                                return $this->price->where('product_id', $model->id)->first()->currency;
-                            } else {
-                                return 'Not available';
-                            }
-                        })
-                        ->addColumn('action', function ($model) {
-                            $url = '';
-                            if ($model->type == 2) {
-                                $url = '<a href='.url('product/download/'.$model->id)." class='btn btn-sm btn-primary'>Download</a>";
-                            }
-
-                            return '<p><a href='.url('products/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>&nbsp;$url</p>";
-                        })
-                        ->searchColumns('name', 'email')
-                        ->orderColumns('name', 'email')
-                        ->make();
-//        } catch (\Exception $e) {
-//            return redirect()->back()->with('fails', $e->getMessage());
-//        }
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->addColumn('name', function ($model) {
+                return ucfirst($model->name);
+            })
+            ->addColumn('type', function ($model) {
+                //dd($model->type());
+                if ($this->type->where('id', $model->type)->first()) {
+                    return $this->type->where('id', $model->type)->first()->name;
+                } else {
+                    return 'Not available';
+                }
+            })
+            ->addColumn('group', function ($model) {
+                //dd($model->type());
+                if ($this->group->where('id', $model->group)->first()) {
+                    return $this->group->where('id', $model->group)->first()->name;
+                } else {
+                    return 'Not available';
+                }
+            })
+            ->addColumn('price', function ($model) {
+                if ($this->price->where('product_id', $model->id)->first()) {
+                    return $this->price->where('product_id', $model->id)->first()->price;
+                } else {
+                    return 'Not available';
+                }
+            })
+            ->addColumn('currency', function ($model) {
+                if ($this->price->where('product_id', $model->id)->first()) {
+                    return $this->price->where('product_id', $model->id)->first()->currency;
+                } else {
+                    return 'Not available';
+                }
+            })
+            ->addColumn('action', function ($model) {
+                $url = '';
+                if ($model->type == 2) {
+                    $url = '<a href=' . url('product/download/' . $model->id) . " class='btn btn-sm btn-primary'>Download</a>";
+                }
+                return '<p><a href=' . url('products/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>&nbsp;$url</p>";
+            })
+            ->searchColumns('name', 'email')
+            ->orderColumns('name', 'email')
+            ->make();
+        //        } catch (\Exception $e) {
+        //            return redirect()->back()->with('fails', $e->getMessage());
+        //        }
     }
 
     /**
@@ -148,14 +135,13 @@ class ProductController extends Controller
              */
             $url = $this->GetMyUrl();
             $i = $this->product->orderBy('created_at', 'desc')->first()->id + 1;
-            $cartUrl = $url.'/pricing?id='.$i;
+            $cartUrl = $url . '/pricing?id=' . $i;
             $type = $this->type->lists('name', 'id')->toArray();
             $subscription = $this->plan->lists('name', 'id')->toArray();
             $currency = $this->currency->lists('name', 'code')->toArray();
             $group = $this->group->lists('name', 'id')->toArray();
             $products = $this->product->lists('name', 'id')->toArray();
             $taxes = $this->tax_class->lists('name', 'id')->toArray();
-
             return view('themes.default1.product.product.create', compact('subscription', 'type', 'currency', 'group', 'cartUrl', 'products', 'taxes'));
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -171,14 +157,13 @@ class ProductController extends Controller
     {
         $input = $request->all();
         $v = \Validator::make($input, [
-                    'name'  => 'required|unique:products,name',
-                    'type'  => 'required',
-                    'group' => 'required',
+            'name' => 'required|unique:products,name',
+            'type' => 'required',
+            'group' => 'required',
         ]);
         $v->sometimes(['file', 'image', 'version'], 'required', function ($input) {
             return $input->type == 2 && $input->github_owner == '' && $input->github_repository == '';
         });
-
         $v->sometimes(['github_owner', 'github_repository'], 'required', function ($input) {
             return $input->type == 2 && $input->file == '' && $input->image == '';
         });
@@ -187,11 +172,10 @@ class ProductController extends Controller
         });
         if ($v->fails()) {
             $currency = $input['currency'];
-
             return redirect()->back()
-                    ->withErrors($v)
-                    ->withInput()
-                    ->with('currency');
+                ->withErrors($v)
+                ->withInput()
+                ->with('currency');
         }
         try {
             if ($request->hasFile('image')) {
@@ -202,18 +186,14 @@ class ProductController extends Controller
             }
             if ($request->hasFile('file')) {
                 $file = $request->file('file')->getClientOriginalName();
-                $filedestinationPath = storage_path().'/products';
+                $filedestinationPath = storage_path() . '/products';
                 $request->file('file')->move($filedestinationPath, $file);
                 $this->product->file = $file;
             }
-
             //dd($request->input('currency'));
-
             $product = $this->product;
             $product->fill($request->except('image', 'file'))->save();
-
             $this->updateVersionFromGithub($product->id);
-
             $product_id = $product->id;
             $subscription = $request->input('subscription');
             $price = $request->input('price');
@@ -224,13 +204,11 @@ class ProductController extends Controller
                     $this->price->create(['product_id' => $product_id, 'currency' => $currency, 'subscription' => $subscription, 'price' => $price[$key], 'sales_price' => $sales_price[$key]]);
                 }
             }
-
             //add tax class to tax_product_relation table
             $taxes = $request->input('tax');
             if ($taxes) {
                 $this->tax_relation->create(['product_id' => $product_id, 'tax_class_id' => $taxes]);
             }
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -265,7 +243,7 @@ class ProductController extends Controller
             $group = $this->group->lists('name', 'id')->toArray();
             $products = $this->product->lists('name', 'id')->toArray();
             $url = $this->GetMyUrl();
-            $cartUrl = $url.'/cart?id='.$id;
+            $cartUrl = $url . '/cart?id=' . $id;
             $product = $this->product->where('id', $id)->first();
             $price = $this->price->where('product_id', $product->id);
             foreach ($currency as $key => $value) {
@@ -282,7 +260,7 @@ class ProductController extends Controller
             $taxes = $this->tax_class->lists('name', 'id')->toArray();
             //dd($taxes);
             $saved_taxes = $this->tax_relation->where('product_id', $id)->get();
-//            dd($saved_taxes);
+            //            dd($saved_taxes);
             return view('themes.default1.product.product.edit', compact('product', 'type', 'subscription', 'currency', 'group', 'price', 'cartUrl', 'products', 'regular', 'sales', 'taxes', 'saved_taxes'));
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -301,20 +279,20 @@ class ProductController extends Controller
         $input = $request->all();
         //dd($input);
         $v = \Validator::make($input, [
-                    'name'  => 'required',
-                    'type'  => 'required',
-                    'group' => 'required',
-//                    'subscription' => 'required',
-//                    'currency.*' => 'required',
-//                    'price.*' => 'required',
+            'name' => 'required',
+            'type' => 'required',
+            'group' => 'required',
+            //                    'subscription' => 'required',
+            //                    'currency.*' => 'required',
+            //                    'price.*' => 'required',
         ]);
-//        $v->sometimes(['file', 'image', 'version'], 'required', function ($input) {
-//            return $input->type == 2 && $input->github_owner == '' && $input->github_repository == '';
-//        });
-//
-//        $v->sometimes(['github_owner', 'github_repository'], 'required', function ($input) {
-//            return $input->type == 2 && $input->file == '' && $input->image == '';
-//        });
+        //        $v->sometimes(['file', 'image', 'version'], 'required', function ($input) {
+        //            return $input->type == 2 && $input->github_owner == '' && $input->github_repository == '';
+        //        });
+        //
+        //        $v->sometimes(['github_owner', 'github_repository'], 'required', function ($input) {
+        //            return $input->type == 2 && $input->file == '' && $input->image == '';
+        //        });
         $v->sometimes(['currency', 'price'], 'required', function ($input) {
             return $input->subscription != 1;
         });
@@ -332,7 +310,7 @@ class ProductController extends Controller
             }
             if ($request->hasFile('file')) {
                 $file = $request->file('file')->getClientOriginalName();
-                $filedestinationPath = storage_path().'/products';
+                $filedestinationPath = storage_path() . '/products';
                 $request->file('file')->move($filedestinationPath, $file);
                 $product->file = $file;
             }
@@ -343,14 +321,11 @@ class ProductController extends Controller
             $cost = $request->input('price');
             $sales_price = $request->input('sales_price');
             $currencies = $request->input('currency');
-
             $prices = $this->price->where('product_id', $product->id)->get();
-
             if (count($currencies) > 0) {
                 foreach ($prices as $price) {
                     $price->delete();
                 }
-
                 foreach ($currencies as $key => $currency) {
                     $this->price->create(['product_id' => $product_id, 'currency' => $currency, 'price' => $cost[$key], 'sales_price' => $sales_price[$key]]);
                 }
@@ -367,11 +342,9 @@ class ProductController extends Controller
                     $this->tax_relation->create(['product_id' => $product_id, 'tax_class_id' => $taxes]);
                 }
             }
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $e) {
             dd($e);
-
             return redirect()->back()->with('fails', $e->getMessage());
         }
     }
@@ -396,42 +369,42 @@ class ProductController extends Controller
                         } else {
                             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                             //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                         }
                         echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.can-not-delete-default').'
+                        ' . \Lang::get('message.can-not-delete-default') . '
                 </div>';
                     }
                 }
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
                 //echo \Lang::get('message.select-a-row');
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }
@@ -444,9 +417,7 @@ class ProductController extends Controller
         $server['path'] = dirname($server['path']);
         $server = parse_url($server['path']);
         $server['path'] = dirname($server['path']);
-
-        $server = 'http://'.$_SERVER['HTTP_HOST'].$server['path'];
-
+        $server = 'http://' . $_SERVER['HTTP_HOST'] . $server['path'];
         return $server;
     }
 
@@ -459,16 +430,13 @@ class ProductController extends Controller
             $owner = $product->github_owner;
             $repository = $product->github_repository;
             $file = $product->file;
-
             if ($type == 2) {
                 if ($owner && $repository) {
                     $github_controller = new \App\Http\Controllers\Github\GithubController();
                     $relese = $github_controller->listRepositories($owner, $repository);
-
-                    return ['release'=>$relese, 'type'=>'github'];
+                    return ['release' => $relese, 'type' => 'github'];
                 } elseif ($file) {
-                    $relese = '/home/faveohelpdesk/products/'.$file;
-
+                    $relese = '/home/faveohelpdesk/products/' . $file;
                     return $relese;
                 }
             }
@@ -482,16 +450,16 @@ class ProductController extends Controller
         try {
             $release = $this->downloadProduct($id);
             if (is_array($release) && array_key_exists('type', $release)) {
-                header('Location: '.$release['release']);
+                header('Location: ' . $release['release']);
                 exit;
             } else {
                 header('Content-type: Zip');
                 header('Content-Description: File Transfer');
                 header('Content-Disposition: attachment; filename=Faveo.zip');
-               //header("Content-type: application/zip");
-               header('Content-Length: '.filesize($release));
-               //ob_clean();
-               flush();
+                //header("Content-type: application/zip");
+                header('Content-Length: ' . filesize($release));
+                //ob_clean();
+                flush();
                 readfile("$release");
                 exit;
             }
@@ -512,7 +480,6 @@ class ProductController extends Controller
             $user = $user->findOrFail($userid);
             $invoice = new \App\Model\Order\Invoice();
             $invoice = $invoice->where('number', $invoice_number)->first();
-
             if ($user && $invoice) {
                 if ($user->active == 1) {
                     $order = $invoice->order()->orderBy('id', 'desc')->select('product')->first();
@@ -520,16 +487,15 @@ class ProductController extends Controller
                     $release = $this->downloadProduct($product_id);
                     if (is_array($release) && array_key_exists('type', $release)) {
                         $release = $release['release'];
-
                         return view('themes.default1.front.download', compact('release', 'form'));
                     } else {
                         header('Content-type: Zip');
                         header('Content-Description: File Transfer');
                         header('Content-Disposition: attachment; filename=Faveo.zip');
-               //header("Content-type: application/zip");
-                  header('Content-Length: '.filesize($release));
-                  //ob_clean();
-                  flush();
+                        //header("Content-type: application/zip");
+                        header('Content-Length: ' . filesize($release));
+                        //ob_clean();
+                        flush();
                         readfile("$release");
                         exit;
                     }
@@ -552,14 +518,11 @@ class ProductController extends Controller
             $plan = $request->input('plan');
             $controller = new \App\Http\Controllers\Front\CartController();
             $price = $controller->cost($id, $userid, $plan);
-            $field = $this->getProductField($id).$this->getProductQtyCheck($id);
-
+            $field = $this->getProductField($id) . $this->getProductQtyCheck($id);
             $result = ['price' => $price, 'field' => $field];
-
             return response()->json($result);
         } catch (\Exception $ex) {
             $result = ['price' => $ex->getMessage(), 'field' => ''];
-
             return response()->json($result);
         }
     }
@@ -589,12 +552,11 @@ class ProductController extends Controller
             if ($product) {
                 if ($product->require_domain == 1) {
                     $field .= "<div class='col-md-4 form-group'>
-                        <label class='required'>".\Lang::get('message.domain')."</label>
+                        <label class='required'>" . \Lang::get('message.domain') . "</label>
                         <input type='text' name='domain' class='form-control' id='domain' placeholder='http://example.com'>
                 </div>";
                 }
             }
-
             return $field;
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -606,14 +568,12 @@ class ProductController extends Controller
         try {
             $product = $this->product->find($productid);
             $field = '';
-
             if ($product->retired == 1) {
                 $field .= "<div class='col-md-4 form-group'>
-                        <label class='required'>".\Lang::get('message.description')."</label>
+                        <label class='required'>" . \Lang::get('message.description') . "</label>
                         <textarea name='description' class='form-control' id='description' placeholder='Description'></textarea>
                 </div>";
             }
-
             return $field;
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -632,16 +592,15 @@ class ProductController extends Controller
                 $plans = $plan->lists('name', 'id')->toArray();
                 $script = ''; //$this->getSubscriptionCheckScript();
                 $field = "<div class='col-md-4 form-group'>
-                        <label class='required'>".\Lang::get('message.subscription').'</label>
-                       '.\Form::select('plan', ['' => 'Select', 'Plans' => $plans], null, ['class' => 'form-control', 'id' => 'plan', 'onchange' => 'getPrice(this.value)']).'
-                </div>'.$script;
+                        <label class='required'>" . \Lang::get('message.subscription') . '</label>
+                       ' . \Form::select('plan', ['' => 'Select', 'Plans' => $plans], null, ['class' => 'form-control', 'id' => 'plan', 'onchange' => 'getPrice(this.value)']) . '
+                </div>' . $script;
             } else {
                 $userid = \Input::get('user');
                 $price = $controller->productCost($productid, $userid);
             }
             $field .= $this->getDescriptionField($productid);
             $result = ['price' => $price, 'field' => $field];
-
             return response()->json($result);
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -654,7 +613,7 @@ class ProductController extends Controller
             $check = self::checkMultiProduct($productid);
             if ($check == true) {
                 return "<div class='col-md-4 form-group'>
-                        <label class='required'>".\Lang::get('message.quantity')."</label>
+                        <label class='required'>" . \Lang::get('message.quantity') . "</label>
                         <input type='text' name='quantity' class='form-control' id='quantity' value='1'>
                 </div>";
             }
@@ -673,7 +632,6 @@ class ProductController extends Controller
                     return true;
                 }
             }
-
             return false;
         } catch (Exception $ex) {
         }
@@ -693,7 +651,7 @@ class ProductController extends Controller
 
         $.ajax({
             type: 'POST',
-            url: ".url('get-price').",
+            url: " . url('get-price') . ",
             data: {'product': val, 'user': user,'plan':plan},
             //data: 'product=' + val+'user='+user,
             success: function (data) {

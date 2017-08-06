@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Product;
 
 use App\BaseModel;
@@ -17,7 +16,6 @@ class Type extends BaseModel
     public function delete()
     {
         $this->Product()->delete();
-
         return parent::delete();
     }
 }

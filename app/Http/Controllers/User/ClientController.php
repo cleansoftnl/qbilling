@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
@@ -44,12 +43,10 @@ class ClientController extends Controller
         $industry = $request->input('industry');
         $company_type = $request->input('company_type');
         $company_size = $request->input('company_size');
-
         $count_users = $this->user->get()->count();
         $pro_editions = $this->soldEdition('Faveo Helpdesk Pro');
         $community = $this->soldEdition('faveo helpdesk community');
         $product_count = $this->productCount();
-
         return view('themes.default1.user.client.index', compact('name', 'username', 'company', 'mobile', 'email', 'country', 'count_users', 'pro_editions', 'community', 'product_count', 'industry', 'company_type', 'company_size'));
     }
 
@@ -67,40 +64,38 @@ class ClientController extends Controller
         $industry = $request->input('industry');
         $company_type = $request->input('company_type');
         $company_size = $request->input('company_size');
-//$user = new User;
-// $user = $this->user->select('id', 'first_name', 'last_name', 'email', 'created_at', 'active')->orderBy('created_at', 'desc');
-//dd($user);
+        //$user = new User;
+        // $user = $this->user->select('id', 'first_name', 'last_name', 'email', 'created_at', 'active')->orderBy('created_at', 'desc');
+        //dd($user);
         $user = $this->advanceSearch($name, $username, $company, $mobile, $email, $country, $industry, $company_type, $company_size);
-
         return \Datatable::query($user)
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->addColumn('first_name', function ($model) {
-                            return '<a href='.url('clients/'.$model->id).'>'.ucfirst($model->first_name).' '.ucfirst($model->last_name).'</a>';
-                        })
-                        ->showColumns('email', 'created_at')
-                        ->addColumn('active', function ($model) {
-                            if ($model->active == 1) {
-                                $email = "<span class='glyphicon glyphicon-envelope' style='color:green' title='verified email'></span>";
-                            } else {
-                                $email = "<span class='glyphicon glyphicon-envelope' style='color:red' title='unverified email'></span>";
-                            }
-                            if ($model->mobile_verified == 1) {
-                                $mobile = "<span class='glyphicon glyphicon-phone' style='color:green' title='verified mobile'></span>";
-                            } else {
-                                $mobile = "<span class='glyphicon glyphicon-phone' style='color:red' title='unverified mobile'></span>";
-                            }
-
-                            return $email.'&nbsp;&nbsp;'.$mobile;
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('clients/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>"
-                                    .'  <a href='.url('clients/'.$model->id)." class='btn btn-sm btn-primary'>View</a>";
-                        })
-                        ->searchColumns('email', 'first_name')
-                        ->orderColumns('email', 'first_name', 'created_at')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->addColumn('first_name', function ($model) {
+                return '<a href=' . url('clients/' . $model->id) . '>' . ucfirst($model->first_name) . ' ' . ucfirst($model->last_name) . '</a>';
+            })
+            ->showColumns('email', 'created_at')
+            ->addColumn('active', function ($model) {
+                if ($model->active == 1) {
+                    $email = "<span class='glyphicon glyphicon-envelope' style='color:green' title='verified email'></span>";
+                } else {
+                    $email = "<span class='glyphicon glyphicon-envelope' style='color:red' title='unverified email'></span>";
+                }
+                if ($model->mobile_verified == 1) {
+                    $mobile = "<span class='glyphicon glyphicon-phone' style='color:green' title='verified mobile'></span>";
+                } else {
+                    $mobile = "<span class='glyphicon glyphicon-phone' style='color:red' title='unverified mobile'></span>";
+                }
+                return $email . '&nbsp;&nbsp;' . $mobile;
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('clients/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>"
+                . '  <a href=' . url('clients/' . $model->id) . " class='btn btn-sm btn-primary'>View</a>";
+            })
+            ->searchColumns('email', 'first_name')
+            ->orderColumns('email', 'first_name', 'created_at')
+            ->make();
     }
 
     /**
@@ -114,7 +109,6 @@ class ClientController extends Controller
         $timezones = $timezones->lists('name', 'id')->toArray();
         $bussinesses = \App\Model\Common\Bussiness::lists('name', 'short')->toArray();
         $managers = User::where('role', 'admin')->where('position', 'manager')->pluck('first_name', 'id')->toArray();
-
         return view('themes.default1.user.client.create', compact('timezones', 'bussinesses', 'managers'));
     }
 
@@ -132,7 +126,6 @@ class ClientController extends Controller
             $user->password = $password;
             $user->fill($request->input())->save();
             $this->sendWelcomeMail($user);
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Swift_TransportException $e) {
             return redirect()->back()->with('warning', 'User has created successfully But email configuration has some problem!');
@@ -156,8 +149,7 @@ class ClientController extends Controller
             $invoices = $invoice->where('user_id', $id)->orderBy('created_at', 'desc')->get();
             $client = $this->user->where('id', $id)->first();
             $orders = $order->where('client', $id)->get();
-//dd($client);
-
+            //dd($client);
             return view('themes.default1.user.client.show', compact('client', 'invoices', 'model_popup', 'orders'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -177,13 +169,10 @@ class ClientController extends Controller
             $user = $this->user->where('id', $id)->first();
             $timezones = new \App\Model\Common\Timezone();
             $timezones = $timezones->lists('name', 'id')->toArray();
-
             $state = \App\Http\Controllers\Front\CartController::getStateByCode($user->state);
             $managers = User::where('role', 'admin')->where('position', 'manager')->pluck('first_name', 'id')->toArray();
-
             $states = \App\Http\Controllers\Front\CartController::findStateByRegionId($user->country);
             $bussinesses = \App\Model\Common\Bussiness::lists('name', 'short')->toArray();
-
             return view('themes.default1.user.client.edit', compact('bussinesses', 'user', 'timezones', 'state', 'states', 'managers'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -201,7 +190,6 @@ class ClientController extends Controller
     {
         $user = $this->user->where('id', $id)->first();
         $user->fill($request->input())->save();
-
         return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
     }
 
@@ -223,39 +211,38 @@ class ClientController extends Controller
                 } else {
                     echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
-//echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
+                    //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                 }
             }
             echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
         } else {
             echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
-//echo \Lang::get('message.select-a-row');
+            //echo \Lang::get('message.select-a-row');
         }
     }
 
     public function getUsers(Request $request)
     {
         //dd($request->all());
-//$s = $request->input('mask');
+        //$s = $request->input('mask');
         $options = $this->user
-//->where('email','LIKE','%'.$s.'%')
-                ->select('email AS text', 'id AS value')
-                ->get();
-
+            //->where('email','LIKE','%'.$s.'%')
+            ->select('email AS text', 'id AS value')
+            ->get();
         return response()->json(compact('options'));
     }
 
@@ -263,20 +250,20 @@ class ClientController extends Controller
     {
         $join = $this->user;
         if ($name) {
-            $join = $join->where('first_name', 'LIKE', '%'.$name.'%')
-                    ->orWhere('last_name', 'LIKE', '%'.$name.'%');
+            $join = $join->where('first_name', 'LIKE', '%' . $name . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $name . '%');
         }
         if ($username) {
-            $join = $join->where('user_name', 'LIKE', '%'.$username.'%');
+            $join = $join->where('user_name', 'LIKE', '%' . $username . '%');
         }
         if ($company) {
-            $join = $join->where('company', 'LIKE', '%'.$company.'%');
+            $join = $join->where('company', 'LIKE', '%' . $company . '%');
         }
         if ($mobile) {
             $join = $join->where('mobile', $mobile);
         }
         if ($email) {
-            $join = $join->where('email', 'LIKE', '%'.$email.'%');
+            $join = $join->where('email', 'LIKE', '%' . $email . '%');
         }
         if ($country) {
             $join = $join->where('country', $country);
@@ -290,9 +277,7 @@ class ClientController extends Controller
         if ($company_size) {
             $join = $join->where('company_size', $company_size);
         }
-
         $join = $join->select('id', 'first_name', 'last_name', 'email', 'created_at', 'active', 'mobile_verified');
-
         return $join;
     }
 
@@ -302,14 +287,12 @@ class ClientController extends Controller
         $product_in_invoice = $invoice->where('product_name', $name)->distinct()->lists('invoice_id');
         $order = new Order();
         $orders = $order->whereIn('invoice_id', $product_in_invoice)->get()->count();
-
         return $orders;
     }
 
     public function productCount()
     {
         $products = $this->product->get()->count();
-
         return $products;
     }
 
@@ -331,7 +314,7 @@ class ClientController extends Controller
         $to = $user->email;
         $subject = $template->name;
         $data = $template->data;
-        $replace = ['name' => $user->first_name.' '.$user->last_name, 'username' => $user->email, 'password' => $str, 'url' => $url];
+        $replace = ['name' => $user->first_name . ' ' . $user->last_name, 'username' => $user->email, 'password' => $str, 'url' => $url];
         $type = '';
         if ($template) {
             $type_id = $template->type;
@@ -341,7 +324,6 @@ class ClientController extends Controller
         //dd($type);
         $templateController = new \App\Http\Controllers\Common\TemplateController();
         $mail = $templateController->mailing($from, $to, $data, $subject, $replace, $type);
-
         return $mail;
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Order;
 
 use App\BaseModel;
@@ -49,7 +48,6 @@ class Invoice extends BaseModel
     {
         $tz = \Auth::user()->timezone()->first()->name;
         $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $value, 'UTC');
-
         return $date->setTimezone($tz);
     }
 
@@ -58,10 +56,8 @@ class Invoice extends BaseModel
         $this->orderRelation()->delete();
         $this->subscription()->delete();
         $this->order()->delete();
-
         $this->invoiceItem()->delete();
         $this->payment()->delete();
-
         return parent::delete();
     }
 }

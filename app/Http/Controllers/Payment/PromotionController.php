@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
@@ -24,19 +23,14 @@ class PromotionController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('admin');
-
         $promotion = new Promotion();
         $this->promotion = $promotion;
-
         $product = new Product();
         $this->product = $product;
-
         $promoRelation = new PromoProductRelation();
         $this->promoRelation = $promoRelation;
-
         $type = new PromotionType();
         $this->type = $type;
-
         $invoice = new Invoice();
         $this->invoice = $invoice;
     }
@@ -58,31 +52,30 @@ class PromotionController extends Controller
     public function GetPromotion()
     {
         return \Datatable::collection($this->promotion->select('code', 'type', 'id')->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->showColumns('code')
-                        ->addColumn('type', function ($model) {
-                            return $this->type->where('id', $model->type)->first()->name;
-                        })
-                        ->addColumn('products', function ($model) {
-                            $selected = $this->promoRelation->select('product_id')->where('promotion_id', $model->id)->get();
-
-                            foreach ($selected as $key => $select) {
-                                $result[$key] = $this->product->where('id', $select->product_id)->first()->name;
-                            }
-                            if (!empty($result)) {
-                                return implode(',', $result);
-                            } else {
-                                return 'None';
-                            }
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('promotions/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('products')
-                        ->orderColumns('code')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->showColumns('code')
+            ->addColumn('type', function ($model) {
+                return $this->type->where('id', $model->type)->first()->name;
+            })
+            ->addColumn('products', function ($model) {
+                $selected = $this->promoRelation->select('product_id')->where('promotion_id', $model->id)->get();
+                foreach ($selected as $key => $select) {
+                    $result[$key] = $this->product->where('id', $select->product_id)->first()->name;
+                }
+                if (!empty($result)) {
+                    return implode(',', $result);
+                } else {
+                    return 'None';
+                }
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('promotions/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('products')
+            ->orderColumns('code')
+            ->make();
     }
 
     /**
@@ -95,7 +88,6 @@ class PromotionController extends Controller
         try {
             $product = $this->product->lists('name', 'id')->toArray();
             $type = $this->type->lists('name', 'id')->toArray();
-
             return view('themes.default1.payment.promotion.create', compact('product', 'type'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -113,11 +105,9 @@ class PromotionController extends Controller
             $promo = $this->promotion->fill($request->input())->save();
             //dd($this->promotion);
             $products = $request->input('applied');
-
             foreach ($products as $product) {
                 $this->promoRelation->create(['product_id' => $product, 'promotion_id' => $this->promotion->id]);
             }
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -149,16 +139,16 @@ class PromotionController extends Controller
             $promotion = $this->promotion->where('id', $id)->first();
             $product = $this->product->lists('name', 'id')->toArray();
             $type = $this->type->lists('name', 'id')->toArray();
-//            if ($promotion->start != null) {
-//                $start = $promotion->start;
-//            } else {
-//                $start = null;
-//            }
-//            if ($promotion->expiry != null) {
-//                $expiry=$promotion->expiry;
-//            } else {
-//                $expiry = null;
-//            }
+            //            if ($promotion->start != null) {
+            //                $start = $promotion->start;
+            //            } else {
+            //                $start = null;
+            //            }
+            //            if ($promotion->expiry != null) {
+            //                $expiry=$promotion->expiry;
+            //            } else {
+            //                $expiry = null;
+            //            }
             $selectedProduct = $this->promoRelation->where('promotion_id', $id)->lists('product_id', 'product_id')->toArray();
             //dd($selectedProduct);
             return view('themes.default1.payment.promotion.edit', compact('product', 'promotion', 'selectedProduct', 'type'));
@@ -190,7 +180,6 @@ class PromotionController extends Controller
             foreach ($products as $product) {
                 $this->promoRelation->create(['product_id' => $product, 'promotion_id' => $promotion->id]);
             }
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -216,34 +205,34 @@ class PromotionController extends Controller
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                         //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                     }
                 }
                 echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
                 //echo \Lang::get('message.select-a-row');
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }
@@ -288,21 +277,18 @@ class PromotionController extends Controller
             //dd($promo->code);
             //return the updated cartcondition
             $coupon = new CartCondition([
-                'name'   => $promo->code,
-                'type'   => 'coupon',
+                'name' => $promo->code,
+                'type' => 'coupon',
                 'target' => 'item',
-                'value'  => $value,
+                'value' => $value,
             ]);
-
             $items = \Cart::getContent();
-
             foreach ($items as $item) {
                 if (count($item->conditions) == 2 || count($item->conditions) == 1) {
                     \Cart::addItemCondition($productid, $coupon);
                 }
             }
             //dd($items);
-
             return 'success';
         } catch (\Exception $ex) {
             dd($ex);
@@ -336,7 +322,6 @@ class PromotionController extends Controller
             if (count(\Cart::getContent())) {
                 $product_price = \Cart::getSubTotal();
             }
-
             $updated_price = $this->findCost($promotion_type, $promotion_value, $product_price, $productid);
             //dd([$product_price,$promotion_type,$updated_price]);
             return $updated_price;
@@ -349,21 +334,18 @@ class PromotionController extends Controller
     {
         try {
             switch ($type) {
-
                 case 1:
                     $percentage = $price * ($value / 100);
-
-                    return '-'.$percentage;
+                    return '-' . $percentage;
                 case 2:
-                    return '-'.$value;
+                    return '-' . $value;
                 case 3:
                     \Cart::update($productid, [
                         'price' => $value,
                     ]);
-
                     return '-0';
                 case 4:
-                    return '-'.$price;
+                    return '-' . $price;
             }
         } catch (\Exception $ex) {
             throw new \Exception(\Lang::get('message.find-cost-error'));

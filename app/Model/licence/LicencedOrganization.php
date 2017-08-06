@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Licence;
 
 use App\BaseModel;

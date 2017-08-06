@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Settings
@@ -12,8 +10,8 @@ return [
     |
     */
     'show_warnings' => false,   // Throw an Exception on warnings from dompdf
-    'orientation'   => 'portrait',
-    'defines'       => [
+    'orientation' => 'portrait',
+    'defines' => [
         /*
          * The location of the DOMPDF font directory
          *
@@ -39,7 +37,6 @@ return [
          * Symbol, ZapfDingbats.
          */
         'DOMPDF_FONT_DIR' => storage_path('fonts/'), // advised by dompdf (https://github.com/dompdf/dompdf/pull/782)
-
         /*
          * The location of the DOMPDF font cache directory
          *
@@ -49,7 +46,6 @@ return [
          * Note: This directory must exist and be writable by the webserver process.
          */
         'DOMPDF_FONT_CACHE' => storage_path('fonts/'),
-
         /*
          * The location of a temporary directory.
          *
@@ -58,7 +54,6 @@ return [
          * using the PFDLib back end.
          */
         'DOMPDF_TEMP_DIR' => sys_get_temp_dir(),
-
         /*
          * ==== IMPORTANT ====
          *
@@ -72,7 +67,6 @@ return [
          * $dompdf = new DOMPDF();	$dompdf->load_html($htmldata); $dompdf->render(); $pdfdata = $dompdf->output();
          */
         'DOMPDF_CHROOT' => realpath(base_path()),
-
         /*
          * Whether to use Unicode fonts or not.
          *
@@ -83,12 +77,10 @@ return [
          * document must be present in your fonts, however.
          */
         'DOMPDF_UNICODE_ENABLED' => true,
-
         /*
          * Whether to enable font subsetting or not.
          */
         'DOMPDF_ENABLE_FONTSUBSETTING' => false,
-
         /*
          * The PDF rendering backend to use
          *
@@ -118,7 +110,6 @@ return [
          * @link http://www.php.net/image
          */
         'DOMPDF_PDF_BACKEND' => 'CPDF',
-
         /*
          * PDFlib license key
          *
@@ -132,7 +123,6 @@ return [
          * a real license code must exist!
          */
         //"DOMPDF_PDFLIB_LICENSE" => "your license key here",
-
         /*
          * html target media view which should be rendered into pdf.
          * List of types and parsing rules for future extensions:
@@ -144,7 +134,6 @@ return [
          * Therefore allow specification of content here.
          */
         'DOMPDF_DEFAULT_MEDIA_TYPE' => 'screen',
-
         /*
          * The default paper size.
          *
@@ -153,7 +142,6 @@ return [
          * @see CPDF_Adapter::PAPER_SIZES for valid sizes ('letter', 'legal', 'A4', etc.)
          */
         'DOMPDF_DEFAULT_PAPER_SIZE' => 'a4',
-
         /*
          * The default font family
          *
@@ -161,7 +149,6 @@ return [
          * @var string
          */
         'DOMPDF_DEFAULT_FONT' => 'serif',
-
         /*
          * Image DPI setting
          *
@@ -196,7 +183,6 @@ return [
          * @var int
          */
         'DOMPDF_DPI' => 96,
-
         /*
          * Enable inline PHP
          *
@@ -210,7 +196,6 @@ return [
          * @var bool
          */
         'DOMPDF_ENABLE_PHP' => false,
-
         /*
          * Enable inline Javascript
          *
@@ -220,7 +205,6 @@ return [
          * @var bool
          */
         'DOMPDF_ENABLE_JAVASCRIPT' => true,
-
         /*
          * Enable remote file access
          *
@@ -239,12 +223,10 @@ return [
          * @var bool
          */
         'DOMPDF_ENABLE_REMOTE' => true,
-
         /*
          * A ratio applied to the fonts height to be more like browsers' line height
          */
         'DOMPDF_FONT_HEIGHT_RATIO' => 1.1,
-
         /*
          * Enable CSS float
          *
@@ -252,12 +234,9 @@ return [
          * @var bool
          */
         'DOMPDF_ENABLE_CSS_FLOAT' => false,
-
         /*
          * Use the more-than-experimental HTML5 Lib parser
          */
         'DOMPDF_ENABLE_HTML5PARSER' => false,
-
     ],
-
 ];

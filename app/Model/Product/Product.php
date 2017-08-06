@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Product;
 
 use App\BaseModel;
@@ -10,7 +9,7 @@ class Product extends BaseModel
     protected $fillable = ['name', 'description', 'type', 'group', 'file', 'image', 'require_domain', 'category',
         'stock_control', 'stock_qty', 'sort_order', 'tax_apply', 'retired', 'hidden', 'multiple_qty', 'auto_terminate',
         'setup_order_placed', 'setup_first_payment', 'setup_accept_manually', 'no_auto_setup', 'shoping_cart_link', 'process_url', 'github_owner', 'github_repository',
-        'deny_after_subscription', 'version', 'parent', 'subscription', ];
+        'deny_after_subscription', 'version', 'parent', 'subscription',];
 
     public function order()
     {
@@ -42,7 +41,6 @@ class Product extends BaseModel
         $this->tax()->delete();
         $this->price()->delete();
         $this->PromoRelation()->delete();
-
         return parent::delete();
     }
 
@@ -53,7 +51,6 @@ class Product extends BaseModel
         } else {
             $image = asset("dist/product/images/$value");
         }
-
         return $image;
     }
 
@@ -66,21 +63,18 @@ class Product extends BaseModel
     public function getParentAttribute($value)
     {
         $value = explode(',', $value);
-
         return $value;
     }
 
     public function planRelation()
     {
         $related = "App\Model\Payment\Plan";
-
         return $this->hasMany($related, 'product');
     }
 
     public function plan()
     {
         $plan = $this->planRelation()->first();
-
         return $plan;
     }
 }

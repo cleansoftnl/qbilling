@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Common;
 
 use App\Http\Controllers\Controller;
@@ -39,40 +38,28 @@ class TemplateController extends Controller
     {
         $this->middleware('auth', ['except' => ['show']]);
         $this->middleware('admin', ['except' => ['show']]);
-
         $template = new Template();
         $this->template = $template;
-
         $type = new TemplateType();
         $this->type = $type;
-
         $product = new Product();
         $this->product = $product;
-
         $price = new Price();
         $this->price = $price;
-
         $subscription = new Subscription();
         $this->subscription = $subscription;
-
         $plan = new Plan();
         $this->plan = $plan;
-
         $licence = new Licence();
         $this->licence = $licence;
-
         $tax_relation = new TaxProductRelation();
         $this->tax_relation = $tax_relation;
-
         $tax = new Tax();
         $this->tax = $tax;
-
         $tax_class = new TaxClass();
         $this->tax_class = $tax_class;
-
         $tax_rule = new TaxOption();
         $this->tax_rule = $tax_rule;
-
         $currency = new Currency();
         $this->currency = $currency;
         $this->smtp();
@@ -98,7 +85,6 @@ class TemplateController extends Controller
             $password = $fields->password;
             $name = $fields->company;
         }
-
         return $this->smtpConfig($driver, $port, $host, $enc, $email, $password, $name);
     }
 
@@ -111,7 +97,6 @@ class TemplateController extends Controller
         Config::set('mail.from', ['address' => $email, 'name' => $name]);
         Config::set('mail.port', intval($port));
         Config::set('mail.host', $host);
-
         return 'success';
     }
 
@@ -127,19 +112,19 @@ class TemplateController extends Controller
     public function GetTemplates()
     {
         return \Datatable::collection($this->template->select('id', 'name', 'type')->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->showColumns('name')
-                        ->addColumn('type', function ($model) {
-                            return $this->type->where('id', $model->type)->first()->name;
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('templates/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name')
-                        ->orderColumns('name')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->showColumns('name')
+            ->addColumn('type', function ($model) {
+                return $this->type->where('id', $model->type)->first()->name;
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('templates/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name')
+            ->orderColumns('name')
+            ->make();
     }
 
     public function create()
@@ -148,9 +133,8 @@ class TemplateController extends Controller
             $controller = new ProductController();
             $url = $controller->GetMyUrl();
             $i = $this->template->orderBy('created_at', 'desc')->first()->id + 1;
-            $cartUrl = $url.'/'.$i;
+            $cartUrl = $url . '/' . $i;
             $type = $this->type->lists('name', 'id')->toArray();
-
             return view('themes.default1.common.template.create', compact('type', 'cartUrl'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -160,14 +144,13 @@ class TemplateController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'=> 'required',
-            'data'=> 'required',
-            'type'=> 'required',
+            'name' => 'required',
+            'data' => 'required',
+            'type' => 'required',
         ]);
         try {
             //dd($request);
             $this->template->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -179,13 +162,11 @@ class TemplateController extends Controller
         try {
             $controller = new ProductController();
             $url = $controller->GetMyUrl();
-
             $i = $this->template->orderBy('created_at', 'desc')->first()->id + 1;
-            $cartUrl = $url.'/'.$i;
+            $cartUrl = $url . '/' . $i;
             //dd($cartUrl);
             $template = $this->template->where('id', $id)->first();
             $type = $this->type->lists('name', 'id')->toArray();
-
             return view('themes.default1.common.template.edit', compact('type', 'template', 'cartUrl'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -195,15 +176,14 @@ class TemplateController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-            'name'=> 'required',
-            'data'=> 'required',
-            'type'=> 'required',
+            'name' => 'required',
+            'data' => 'required',
+            'type' => 'required',
         ]);
         try {
             //dd($request);
             $template = $this->template->where('id', $id)->first();
             $template->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -229,33 +209,33 @@ class TemplateController extends Controller
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
-//echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
+                        //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                     }
                 }
                 echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }
@@ -268,19 +248,15 @@ class TemplateController extends Controller
             $data = $page_controller->transform($type, $data, $transform);
             $settings = \App\Model\Common\Setting::find(1);
             $fromname = $settings->company;
-
             \Mail::send('emails.mail', ['data' => $data], function ($m) use ($from, $to, $subject, $fromname, $toname, $cc, $attach) {
                 $m->from($from, $fromname);
-
                 $m->to($to, $toname)->subject($subject);
-
                 /* if cc is need  */
                 if (!empty($cc)) {
                     foreach ($cc as $address) {
                         $m->cc($address['address'], $address['name']);
                     }
                 }
-
                 /*  if attachment is need */
                 if (!empty($attach)) {
                     foreach ($attach as $file) {
@@ -288,7 +264,6 @@ class TemplateController extends Controller
                     }
                 }
             });
-
             return 'success';
         } catch (\Exception $ex) {
             dd($ex);
@@ -312,11 +287,11 @@ class TemplateController extends Controller
         }
         $cc = [
             0 => [
-                'name'    => 'vijay',
+                'name' => 'vijay',
                 'address' => 'vijaysebastian111@gmail.com',
             ],
             1 => [
-                'name'    => 'vijay sebastian',
+                'name' => 'vijay sebastian',
                 'address' => 'vijaysebastian23@gmail.com',
             ],
         ];
@@ -326,10 +301,10 @@ class TemplateController extends Controller
             ],
         ];
         $replace = [
-            'name'     => 'vijay sebastian',
+            'name' => 'vijay sebastian',
             'usernmae' => 'vijay',
             'password' => 'jfdvhd',
-            'address'  => 'dshbcvhjdsbvchdff',
+            'address' => 'dshbcvhjdsbvchdff',
         ];
         $this->Mailing($from, $to, $data, $subject, $replace, 'from', 'to', $cc, $attachments);
     }
@@ -341,27 +316,26 @@ class TemplateController extends Controller
                 $modelid = $title;
             }
             if ($trigger == true) {
-                $trigger = "<a href=# class=$class  data-toggle='modal' data-target=#edit".$modelid.'>'.$name.'</a>';
+                $trigger = "<a href=# class=$class  data-toggle='modal' data-target=#edit" . $modelid . '>' . $name . '</a>';
             } else {
                 $trigger = '';
             }
-
-            return $trigger."
-                        <div class='modal fade' id=edit".$modelid.">
-                            <div class='modal-dialog' style='width: ".$width."px;'>
+            return $trigger . "
+                        <div class='modal fade' id=edit" . $modelid . ">
+                            <div class='modal-dialog' style='width: " . $width . "px;'>
                                 <div class='modal-content'>
                                     <div class='modal-header'>
                                         <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
-                                        <h4 class='modal-title'>".$title."</h4>
+                                        <h4 class='modal-title'>" . $title . "</h4>
                                     </div>
                                     <div class='modal-body'>
-                                    ".$body."
+                                    " . $body . "
                                     </div>
                                     <div class='modal-footer'>
                                         <button type=button id=close class='btn btn-default pull-left' data-dismiss=modal>Close</button>
-                                        <input type=submit class='btn btn-primary' value=".\Lang::get('message.save').'>
+                                        <input type=submit class='btn btn-primary' value=" . \Lang::get('message.save') . '>
                                     </div>
-                                    '.\Form::close().'
+                                    ' . \Form::close() . '
                                 </div>
                             </div>
                         </div>';
@@ -397,14 +371,14 @@ class TemplateController extends Controller
             $product = $this->product->findOrFail($productid);
             //dd($product);
             $controller = new \App\Http\Controllers\Front\CartController();
-//            $price = $controller->cost($productid);
-////            $price = $product->price()->where('currency', $currency)->first()->sales_price;
-////            if (!$price) {
-////                $price = $product->price()->where('currency', $currency)->first()->price;
-////            }
-//
+            //            $price = $controller->cost($productid);
+            ////            $price = $product->price()->where('currency', $currency)->first()->sales_price;
+            ////            if (!$price) {
+            ////                $price = $product->price()->where('currency', $currency)->first()->price;
+            ////            }
+            //
             $currency = $controller->currency();
-//
+            //
             $tax_relation = $this->tax_relation->where('product_id', $productid)->first();
             if (!$tax_relation) {
                 return $this->withoutTaxRelation($productid, $currency);
@@ -427,7 +401,6 @@ class TemplateController extends Controller
                     $tax_amount = $this->calculateTotal($rate, $price);
                 }
             }
-
             return $tax_amount;
         } catch (\Exception $ex) {
             dd($ex);
@@ -445,7 +418,6 @@ class TemplateController extends Controller
                 } else {
                     $rate = $tax->rate;
                 }
-
                 $tax_amount = $this->ifStatement($rate, $price, $cart, $shop, $tax->country, $tax->state);
             }
             //dd($tax_amount);
@@ -464,11 +436,9 @@ class TemplateController extends Controller
             $shop = $tax_rule->shop_inclusive;
             $cart = $tax_rule->cart_inclusive;
             $result = $price;
-
             $location = \GeoIP::getLocation();
             $counrty_iso = $location['isoCode'];
-            $state_code = $location['isoCode'].'-'.$location['state'];
-
+            $state_code = $location['isoCode'] . '-' . $location['state'];
             $geoip_country = '';
             $geoip_state = '';
             if (\Auth::user()) {
@@ -484,7 +454,6 @@ class TemplateController extends Controller
                     $geoip_state = $geoip_state_array['id'];
                 }
             }
-
             //dd($geoip_country);
             if ($country == $geoip_country || $state == $geoip_state || ($country == '' && $state == '')) {
                 if ($product == 1 && $shop == 1 && $cart == 1) {
@@ -512,7 +481,6 @@ class TemplateController extends Controller
                     $result = $this->calculateTotalcart($rate, $price, $cart1, $shop1 = 0);
                 }
             }
-
             return $result;
         } catch (\Exception $ex) {
             dd($ex);
@@ -526,7 +494,6 @@ class TemplateController extends Controller
             $product = $this->product->findOrFail($productid);
             $controller = new \App\Http\Controllers\Front\CartController();
             $price = $controller->cost($productid);
-
             return $price;
         } catch (\Exception $ex) {
             dd($ex);
@@ -551,10 +518,8 @@ class TemplateController extends Controller
         try {
             if (($cart == 1 && $shop == 1) || ($cart == 1 && $shop == 0) || ($cart == 0 && $shop == 1)) {
                 $total = $price / (($rate / 100) + 1);
-
                 return $total;
             }
-
             return $price;
         } catch (Exception $ex) {
             throw new \Exception($ex->getMessage());
@@ -570,7 +535,6 @@ class TemplateController extends Controller
                 //dd($total);
                 return $total;
             }
-
             return $price;
         } catch (Exception $ex) {
             throw new \Exception($ex->getMessage());
@@ -586,10 +550,9 @@ class TemplateController extends Controller
         if (count($plans) > 0) {
             $plan_form = \Form::select('subscription', ['Plans' => $plans], null);
         }
-        $form = \Form::open(['method' => 'get', 'url' => $url]).
-                $plan_form.
-                \Form::hidden('id', $id);
-
+        $form = \Form::open(['method' => 'get', 'url' => $url]) .
+            $plan_form .
+            \Form::hidden('id', $id);
         return $form;
     }
 
@@ -600,15 +563,13 @@ class TemplateController extends Controller
         $price = [];
         $cart_controller = new \App\Http\Controllers\Front\CartController();
         $currency = $cart_controller->currency();
-
         foreach ($plans as $value) {
             $cost = $value->planPrice()->where('currency', $currency)->first()->add_price;
             $cost = \App\Http\Controllers\Front\CartController::rounding($cost);
             $months = round($value->days / 30);
-            $price[$value->id] = $months.' Month at '.$currency.' '.$cost.'/month';
+            $price[$value->id] = $months . ' Month at ' . $currency . ' ' . $cost . '/month';
         }
         $this->leastAmount($id);
-
         return $price;
     }
 
@@ -633,10 +594,9 @@ class TemplateController extends Controller
             $product_cost = \App\Http\Controllers\Front\CartController::calculateTax($id, $price, 1, 0, 1);
             $product_cost = \App\Http\Controllers\Front\CartController::rounding($product_cost);
             if ($product_cost != 0) {
-                $cost = $currency.' '.$product_cost;
+                $cost = $currency . ' ' . $product_cost;
             }
         }
-
         return $cost;
     }
 }

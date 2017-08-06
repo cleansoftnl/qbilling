@@ -1,5 +1,4 @@
 <?php
-
 return [
     /*
       |--------------------------------------------------------------------------
@@ -7,7 +6,6 @@ return [
       |--------------------------------------------------------------------------
       |
      */
-
     'table' => [
         /*
           |--------------------------------------------------------------------------
@@ -18,7 +16,6 @@ return [
           | Supported: string
           |
          */
-
         'class' => 'table table-responsive table-bordered table-striped dataTable mailbox-messages',
         /*
           |--------------------------------------------------------------------------
@@ -43,22 +40,21 @@ return [
           |
          */
         'options' => [
-//            "dom" => "Bfrtip",
-//            "buttons" => [
-//                [
-//                    "text" => "My button",
-//                    "action" => "function ( e, dt, node, config ) {
-//                    alert( 'Button activated' );
-//                }"
-//                ]
-//            ],
-            'pagingType'  => 'simple_numbers',
+            //            "dom" => "Bfrtip",
+            //            "buttons" => [
+            //                [
+            //                    "text" => "My button",
+            //                    "action" => "function ( e, dt, node, config ) {
+            //                    alert( 'Button activated' );
+            //                }"
+            //                ]
+            //            ],
+            'pagingType' => 'simple_numbers',
             'bProcessing' => true,
-            'columnDefs'  => [['targets' => 0, 'orderable' => false]],
-            'oLanguage'   => [
-                    'sProcessing'=> '<img id="blur-bg" class="backgroundfadein" style="top:40%;left:50%; width: 50px; height:50 px; display: block; position:    fixed;" src="'.asset('dist/gif/gifloader.gif').'">',
-                ],
-
+            'columnDefs' => [['targets' => 0, 'orderable' => false]],
+            'oLanguage' => [
+                'sProcessing' => '<img id="blur-bg" class="backgroundfadein" style="top:40%;left:50%; width: 50px; height:50 px; display: block; position:    fixed;" src="' . asset('dist/gif/gifloader.gif') . '">',
+            ],
         ],
         /*
           |--------------------------------------------------------------------------
@@ -72,14 +68,14 @@ return [
           |
          */
         'callbacks' => [
-'fnDrawCallback'=> 'function( oSettings ) {
+            'fnDrawCallback' => 'function( oSettings ) {
                     $(".box-body").css({"opacity": "1"});
                     $("#blur-bg").css({"opacity": "1", "z-index": "99999"});
                 }',
-                'fnPreDrawCallback'=> 'function(oSettings, json) {
+            'fnPreDrawCallback' => 'function(oSettings, json) {
                     $(".box-body").css({"opacity":"0.3"});
                 }',
-],
+        ],
         /*
           |--------------------------------------------------------------------------
           | Skip javascript in table template
@@ -127,7 +123,6 @@ return [
           | Supported: boolean
           |
          */
-
         'exactWordSearch' => false,
     ],
     /*
@@ -138,7 +133,7 @@ return [
      */
     'classmap' => [
         'CollectionEngine' => 'Chumper\Datatable\Engines\CollectionEngine',
-        'QueryEngine'      => 'Chumper\Datatable\Engines\QueryEngine',
-        'Table'            => 'Chumper\Datatable\Table',
+        'QueryEngine' => 'Chumper\Datatable\Engines\QueryEngine',
+        'Table' => 'Chumper\Datatable\Table',
     ],
 ];

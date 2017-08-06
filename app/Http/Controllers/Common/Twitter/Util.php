@@ -3,9 +3,7 @@
  * The MIT License
  * Copyright (c) 2007 Andy Smith.
  */
-
 namespace App\Http\Controllers\Common\Twitter;
-
 class Util
 {
     /**
@@ -17,11 +15,10 @@ class Util
     {
         $output = '';
         if (is_array($input)) {
-            $output = array_map([__NAMESPACE__.'\Util', 'urlencodeRfc3986'], $input);
+            $output = array_map([__NAMESPACE__ . '\Util', 'urlencodeRfc3986'], $input);
         } elseif (is_scalar($input)) {
             $output = rawurlencode($input);
         }
-
         return $output;
     }
 
@@ -49,31 +46,25 @@ class Util
         if (!isset($input) || !$input) {
             return [];
         }
-
         $pairs = explode('&', $input);
-
         $parameters = [];
         foreach ($pairs as $pair) {
             $split = explode('=', $pair, 2);
             $parameter = self::urldecodeRfc3986($split[0]);
             $value = isset($split[1]) ? self::urldecodeRfc3986($split[1]) : '';
-
             if (isset($parameters[$parameter])) {
                 // We have already recieved parameter(s) with this name, so add to the list
                 // of parameters with this name
-
                 if (is_scalar($parameters[$parameter])) {
                     // This is the first duplicate, so transform scalar (string) into an array
                     // so we can add the duplicates
                     $parameters[$parameter] = [$parameters[$parameter]];
                 }
-
                 $parameters[$parameter][] = $value;
             } else {
                 $parameters[$parameter] = $value;
             }
         }
-
         return $parameters;
     }
 
@@ -87,16 +78,13 @@ class Util
         if (!$params) {
             return '';
         }
-
         // Urlencode both keys and values
         $keys = self::urlencodeRfc3986(array_keys($params));
         $values = self::urlencodeRfc3986(array_values($params));
         $params = array_combine($keys, $values);
-
         // Parameters are sorted by name, using lexicographical byte value ordering.
         // Ref: Spec: 9.1.1 (1)
         uksort($params, 'strcmp');
-
         $pairs = [];
         foreach ($params as $parameter => $value) {
             if (is_array($value)) {
@@ -105,10 +93,10 @@ class Util
                 // June 12th, 2010 - changed to sort because of issue 164 by hidetaka
                 sort($value, SORT_STRING);
                 foreach ($value as $duplicateValue) {
-                    $pairs[] = $parameter.'='.$duplicateValue;
+                    $pairs[] = $parameter . '=' . $duplicateValue;
                 }
             } else {
-                $pairs[] = $parameter.'='.$value;
+                $pairs[] = $parameter . '=' . $value;
             }
         }
         // For each parameter, the name is separated from the corresponding value by an '=' character (ASCII code 61)

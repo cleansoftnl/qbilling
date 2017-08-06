@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Model\Order\Order;
@@ -19,7 +18,6 @@ class HomeController extends Controller
       | controller as you wish. It is just here to get your app started!
       |
      */
-
     /**
      * Create a new controller instance.
      *
@@ -44,7 +42,6 @@ class HomeController extends Controller
     public function version(Request $request, Product $product)
     {
         $url = $request->input('response_url');
-
         $title = $request->input('title');
         //dd($title);
         $id = $request->input('id');
@@ -53,18 +50,16 @@ class HomeController extends Controller
         } else {
             $product = $product->where('name', $title)->first();
         }
-
         if ($product) {
             $version = str_replace('v', '', $product->version);
         } else {
             $version = 'Not-Available';
         }
-
         echo "<form action=$url method=post name=redirect >";
-        echo '<input type=hidden name=_token value='.csrf_token().'>';
+        echo '<input type=hidden name=_token value=' . csrf_token() . '>';
         echo "<input type=hidden name=value value=$version />";
         echo '</form>';
-        echo"<script language='javascript'>document.redirect.submit();</script>";
+        echo "<script language='javascript'>document.redirect.submit();</script>";
     }
 
     public function getVersion(Request $request, Product $product)
@@ -79,7 +74,6 @@ class HomeController extends Controller
         } else {
             return 0;
         }
-
         return str_replace('v', '', $product->version);
     }
 
@@ -91,7 +85,6 @@ class HomeController extends Controller
         $response = 'http://localhost/billings/agorainvoicing/agorainvoicing/public/version-result';
         $name = 'faveo helpdesk community';
         $version = $product->version;
-
         return str_replace('v', '', $product->version);
     }
 
@@ -112,7 +105,7 @@ class HomeController extends Controller
             $domain = $this->getDomain($request->input('domain'));
             $domain = $this->checkDomain($domain);
             $serial_key = $this->checkSerialKey($faveo_encrypted_key, $order_number);
-            \Log::emergency(json_encode(['domain'=>$request->input('domain'), 'serial'=>$serial_key, 'order'=>$order_number]));
+            \Log::emergency(json_encode(['domain' => $request->input('domain'), 'serial' => $serial_key, 'order' => $order_number]));
             $result = [];
             if ($request_type == 'install') {
                 $result = $this->verificationResult($order_number, $serial_key, $domain);
@@ -121,12 +114,10 @@ class HomeController extends Controller
                 $result = $this->checkUpdate($order_number, $serial_key, $domain, $faveo_name, $faveo_version);
             }
             $result = self::encryptByPublicKey(json_encode($result));
-
             return $result;
         } catch (Exception $ex) {
             $result = ['status' => 'error', 'message' => $ex->getMessage()];
             $result = self::encryptByPublicKey(json_encode($result));
-
             return $result;
         }
     }
@@ -137,14 +128,12 @@ class HomeController extends Controller
             $url = $request->input('url');
             $faveo_encrypted_order_number = self::decryptByFaveoPrivateKey($request->input('order_number'));
             $domain = $this->getDomain($request->input('domain'));
-
             return $domain;
             $faveo_encrypted_key = self::decryptByFaveoPrivateKey($request->input('serial_key'));
             $request_type = $request->input('request_type');
             $faveo_name = $request->input('name');
             $faveo_version = $request->input('version');
             $order_number = $this->checkOrder($faveo_encrypted_order_number);
-
             $domain = $this->checkDomain($domain);
             $serial_key = $this->checkSerialKey($faveo_encrypted_key, $order_number);
             //dd($serial_key);
@@ -170,17 +159,15 @@ class HomeController extends Controller
         try {
             //$encrypted = p¥Ùn¿olÓ¥9)OÞÝ¸Ôvh§=Ìtt1rkC‰É§%YœfÐS\BâkHW€mùÌØg¹+VŠ¥²?áÙ{/<¶¡£e¡ˆr°(V)Öíàr„Ž]K9¤ÿÖ¡Åmž”üÈoò×´î¢“µºŽ06¼e€rœ['4çhH¾ö:¨œ–S„œ¦,|¤ÇqÂrÈŸd+ml‡ uötÏ†ûóŽ&›áyÙ(ÆŒÁ$‘¥±Zj*îàÒöL‘ˆD†aÉö_§è¶°·V„Þú]%ÅR*B=žéršæñ*i+á­±èç|c¹ÑßŸ­F$;
             // Get the private Key
-            $path = storage_path('app'.DIRECTORY_SEPARATOR.'private.key');
+            $path = storage_path('app' . DIRECTORY_SEPARATOR . 'private.key');
             $key_content = file_get_contents($path);
             if (!$privateKey = openssl_pkey_get_private($key_content)) {
                 die('Private Key failed');
             }
             $a_key = openssl_pkey_get_details($privateKey);
-
             // Decrypt the data in the small chunks
             $chunkSize = ceil($a_key['bits'] / 8);
             $output = '';
-
             while ("¥IM‰``ì‡Á›LVP›†>¯öóŽÌ3(¢z#¿î1¾­:±Zï©PqÊ´Â›7×:Fà¯¦	à•…Ä'öESW±ÉŸLÃvÈñÔs•ÍU)ÍL 8¬š‰A©·Å $}Œ•lA9™¡”¸èÅØv‘ÂOÈ6„_y5¤ì§—ÿíà(ow‰È&’v&T/FLƒigjÒZ eæaa”{©ªUBFÓ’Ga*ÀŒ×?£}-jÏùh¾Q/Ž“1YFq[Í‰¬òÚ‚œ½Éº5ah¶vZ#,ó@‚rOÆ±íVåèÜÖšU¦ÚmSÎ“Mý„ùP") {
                 $chunk = substr($encrypted, 0, $chunkSize);
                 $encrypted = substr($encrypted, $chunkSize);
@@ -191,11 +178,10 @@ class HomeController extends Controller
                 $output .= $decrypted;
             }
             openssl_free_key($privateKey);
-
             // Uncompress the unencrypted data.
             $output = gzuncompress($output);
             dd($output);
-            echo '<br /><br /> Unencrypted Data: '.$output;
+            echo '<br /><br /> Unencrypted Data: ' . $output;
         } catch (Exception $ex) {
             dd($ex);
         }
@@ -208,12 +194,11 @@ class HomeController extends Controller
         $envelope = $encrypted->envelope;
         $input = base64_decode($sealed_data);
         $einput = base64_decode($envelope);
-        $path = storage_path('app'.DIRECTORY_SEPARATOR.'private.key');
+        $path = storage_path('app' . DIRECTORY_SEPARATOR . 'private.key');
         $key_content = file_get_contents($path);
         $private_key = openssl_get_privatekey($key_content);
         $plaintext = null;
         openssl_open($input, $plaintext, $einput, $private_key);
-
         return $plaintext;
     }
 
@@ -221,7 +206,6 @@ class HomeController extends Controller
     {
         $enc = $request->input('en');
         $result = self::decryptByFaveoPrivateKey($enc);
-
         return response()->json($result);
     }
 
@@ -235,13 +219,11 @@ class HomeController extends Controller
             //dd($privateKey);
             // Save the private key to private.key file. Never share this file with anyone.
             openssl_pkey_export_to_file($privateKey, 'private.key');
-
             // Generate the public key for the private key
             $a_key = openssl_pkey_get_details($privateKey);
             //dd($a_key);
             // Save the public key in public.key file. Send this file to anyone who want to send you the encrypted data.
             file_put_contents('public.key', $a_key['key']);
-
             // Free the private Key.
             openssl_free_key($privateKey);
         } catch (\Exception $ex) {
@@ -262,7 +244,6 @@ class HomeController extends Controller
                     return $this_order->serial_key;
                 }
             }
-
             return;
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage());
@@ -273,8 +254,7 @@ class HomeController extends Controller
     {
         try {
             $order = new Order();
-//            $faveo_decrypted_order = self::decryptByFaveoPrivateKey($faveo_encrypted_order_number);
-
+            //            $faveo_decrypted_order = self::decryptByFaveoPrivateKey($faveo_encrypted_order_number);
             $this_order = $order->where('number', $faveo_decrypted_order)->first();
             if (!$this_order) {
                 return;
@@ -310,11 +290,10 @@ class HomeController extends Controller
         try {
             $order = new Order();
             $this_order = $order
-                    ->where('number', $order_number)
-                    //->where('serial_key', $serial_key)
-                    ->where('domain', $domain)
-                    ->first();
-
+                ->where('number', $order_number)
+                //->where('serial_key', $serial_key)
+                ->where('domain', $domain)
+                ->first();
             return $this_order;
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage());
@@ -328,25 +307,15 @@ class HomeController extends Controller
             $data = $request->input('data');
             $json = self::decryptByFaveoPrivateKey($data);
             $data = json_decode($json);
-
             $domain = $data->url;
-
             $faveo_encrypted_order_number = $data->order_number;
-
             //$domain = $data->domain;
-
             $faveo_encrypted_key = $data->serial_key;
-
             $request_type = $data->request_type;
-
             $faveo_name = $data->name;
-
             $faveo_version = $data->version;
-
             $order_number = $this->checkOrder($faveo_encrypted_order_number);
-
             $domain = $this->checkDomain($domain);
-
             $serial_key = $this->checkSerialKey($faveo_encrypted_key, $order_number);
             //dd($serial_key);
             //return $serial_key;
@@ -358,12 +327,10 @@ class HomeController extends Controller
                 $result = $this->checkUpdate($order_number, $serial_key, $domain, $faveo_name, $faveo_version);
             }
             $result = self::encryptByPublicKey(json_encode($result));
-
             return $result;
         } catch (Exception $ex) {
             $result = ['status' => 'error', 'message' => $ex->getMessage()];
             $result = self::encryptByPublicKey(json_encode($result));
-
             return $result;
         }
     }
@@ -372,9 +339,9 @@ class HomeController extends Controller
     {
         echo "<form action=$url method=post name=redirect>";
         echo '<input type=hidden name=_token value=csrf_token()/>';
-        echo '<input type=hidden name=result value='.$result.'/>';
+        echo '<input type=hidden name=result value=' . $result . '/>';
         echo '</form>';
-        echo"<script language='javascript'>document.redirect.submit();</script>";
+        echo "<script language='javascript'>document.redirect.submit();</script>";
     }
 
     public function verificationResult($order_number, $serial_key, $domain)
@@ -426,12 +393,10 @@ class HomeController extends Controller
                     $this_product = $product->where('id', $product_id)->first();
                     if ($this_product) {
                         $version = str_replace('v', '', $this_product->version);
-
                         return ['status' => 'success', 'message' => 'this-is-a-valid-request', 'version' => $version];
                     }
                 }
             }
-
             return ['status' => 'fails', 'message' => 'this-is-an-invalid-request'];
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage());
@@ -448,19 +413,15 @@ class HomeController extends Controller
 
     public static function encryptByPublicKey($data)
     {
-        $path = storage_path().DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'public.key';
+        $path = storage_path() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'public.key';
         //dd($path);
         $key_content = file_get_contents($path);
         $public_key = openssl_get_publickey($key_content);
-
         $encrypted = $e = null;
         openssl_seal($data, $encrypted, $e, [$public_key]);
-
         $sealed_data = base64_encode($encrypted);
         $envelope = base64_encode($e[0]);
-
         $result = ['seal' => $sealed_data, 'envelope' => $envelope];
-
         return json_encode($result);
     }
 
@@ -471,7 +432,6 @@ class HomeController extends Controller
         if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs)) {
             return $regs['domain'];
         }
-
         return $domain;
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Github;
 
 use App\Http\Controllers\Controller;
@@ -15,7 +14,6 @@ class GithubApiController extends Controller
     {
         $model = new Github();
         $this->github = $model->firstOrFail();
-
         $this->username = $this->github->username;
         $this->password = $this->github->password;
     }
@@ -32,7 +30,6 @@ class GithubApiController extends Controller
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
         $content = curl_exec($ch);
         curl_close($ch);
-
         return json_decode($content, true);
     }
 
@@ -49,13 +46,11 @@ class GithubApiController extends Controller
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["User-Agent:$this->username"]);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
         if (curl_exec($ch) === false) {
-            echo 'Curl error: '.curl_error($ch);
+            echo 'Curl error: ' . curl_error($ch);
         }
         $content = curl_exec($ch);
-
         //dd($content);
         curl_close($ch);
-
         return json_decode($content, true);
     }
 
@@ -75,7 +70,7 @@ class GithubApiController extends Controller
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["User-Agent:$this->username"]);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
         if (curl_exec($ch) === false) {
-            echo 'Curl error: '.curl_error($ch);
+            echo 'Curl error: ' . curl_error($ch);
         }
         $content = curl_exec($ch);
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -83,7 +78,6 @@ class GithubApiController extends Controller
         $header = $this->convertHeaderToArray($header, $content);
         $body = substr($content, $header_size);
         curl_close($ch);
-
         return ['body' => json_decode($body, true), 'header' => $header];
     }
 
@@ -91,18 +85,15 @@ class GithubApiController extends Controller
     {
         try {
             $headers = [];
-
             $header_text = substr($response, 0, strpos($response, "\r\n\r\n"));
             foreach (explode("\r\n", $header_text) as $i => $line) {
                 if ($i === 0) {
                     $headers['http_code'] = $line;
                 } else {
                     list($key, $value) = explode(': ', $line);
-
                     $headers[$key] = $value;
                 }
             }
-
             return $headers;
         } catch (\Exception $e) {
             dd($e);
@@ -135,7 +126,7 @@ class GithubApiController extends Controller
                     'method' => 'GET',
                     'header' => [
                         "User-Agent:$this->username",
-                        'Authorization: Basic '.base64_encode("$this->username:$this->password"),
+                        'Authorization: Basic ' . base64_encode("$this->username:$this->password"),
                     ],
                 ],
             ]);

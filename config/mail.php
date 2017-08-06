@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Mail Driver
@@ -14,9 +12,7 @@ return [
     | Supported: "smtp", "mail", "sendmail", "mailgun", "mandrill", "log"
     |
     */
-
     'driver' => 'mail',
-
     /*
     |--------------------------------------------------------------------------
     | SMTP Host Address
@@ -27,9 +23,7 @@ return [
     | the Mailgun mail service which will provide reliable deliveries.
     |
     */
-
     'host' => '',
-
     /*
     |--------------------------------------------------------------------------
     | SMTP Host Port
@@ -40,9 +34,7 @@ return [
     | stay compatible with the Mailgun e-mail application by default.
     |
     */
-
     'port' => '',
-
     /*
     |--------------------------------------------------------------------------
     | Global "From" Address
@@ -53,9 +45,7 @@ return [
     | used globally for all e-mails that are sent by your application.
     |
     */
-
     'from' => ['address' => 'info@faveohelpdesk.com', 'name' => 'Faveo Helpdesk'],
-
     /*
     |--------------------------------------------------------------------------
     | E-Mail Encryption Protocol
@@ -66,9 +56,7 @@ return [
     | transport layer security protocol should provide great security.
     |
     */
-
     'encryption' => '',
-
     /*
     |--------------------------------------------------------------------------
     | SMTP Server Username
@@ -79,9 +67,7 @@ return [
     | connection. You may also set the "password" value below this one.
     |
     */
-
     'username' => '',
-
     /*
     |--------------------------------------------------------------------------
     | SMTP Server Password
@@ -92,9 +78,7 @@ return [
     | connection so that the application will be able to send messages.
     |
     */
-
     'password' => '',
-
     /*
     |--------------------------------------------------------------------------
     | Sendmail System Path
@@ -105,9 +89,7 @@ return [
     | been provided here, which will work well on most of your systems.
     |
     */
-
     'sendmail' => '/usr/sbin/sendmail -bs',
-
     /*
     |--------------------------------------------------------------------------
     | Mail "Pretend"
@@ -118,7 +100,5 @@ return [
     | you may inspect the message. This is great for local development.
     |
     */
-
     //'pretend' => false,
-
 ];

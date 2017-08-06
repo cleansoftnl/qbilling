@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use App\User;
@@ -31,7 +30,7 @@ class Authenticate
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
+     * @param \Closure $next
      *
      * @return mixed
      */
@@ -48,7 +47,6 @@ class Authenticate
             return $next($request);
         } else {
             \Auth::logout();
-
             return redirect('home')->with('fails', 'Activate Your Account');
         }
     }

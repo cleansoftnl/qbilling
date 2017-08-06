@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Product;
 
 use App\BaseModel;
@@ -17,7 +16,6 @@ class ProductBundle extends BaseModel
     public function delete()
     {
         $this->relation()->delete();
-
         return parent::delete();
     }
 }

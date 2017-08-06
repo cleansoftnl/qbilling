@@ -1,21 +1,21 @@
 @extends('themes.default1.layouts.front.myaccount_master')
 @section('title')
-Agora | Subscriptions
+  Agora | Subscriptions
 @stop
 @section('nav-subscriptions')
-active
+  active
 @stop
 
 @section('content')
 
-<h2 class="mb-none"> Subscriptions Table</h2>
+  <h2 class="mb-none"> Subscriptions Table</h2>
 
-<div class="col-md-12 pull-center">
+  <div class="col-md-12 pull-center">
     {!! Datatable::table()
     ->addColumn('Number','Date','Total','Action')
     ->setUrl('get-my-subscriptions') 
     ->render() !!}
-</div>    
+  </div>
 
 
 @stop

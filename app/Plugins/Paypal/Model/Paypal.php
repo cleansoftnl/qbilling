@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Plugins\Paypal\Model;
 
 use Illuminate\Database\Eloquent\Model;

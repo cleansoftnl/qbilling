@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Order;
 
 use App\BaseModel;
@@ -19,7 +18,7 @@ class Payment extends BaseModel
         return $this->belongsTo('App\User');
     }
 
-//    public function setCreatedAtAttribute($value) {
-//        dd($value);
-//    }
+    //    public function setCreatedAtAttribute($value) {
+    //        dd($value);
+    //    }
 }

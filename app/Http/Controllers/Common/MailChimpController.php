@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Common;
 
 use App\Http\Controllers\Controller;
@@ -27,16 +26,12 @@ class MailChimpController extends Controller
         $this->mailchimp_set = $mailchimp_set->firstOrFail();
         $this->mail_api_key = $this->mailchimp_set->api_key;
         $this->list_id = $this->mailchimp_set->list_id;
-
         $mailchimp_filed_model = new MailchimpField();
         $this->mailchimp_field_model = $mailchimp_filed_model;
-
         $lists = new MailchimpLists();
         $this->lists = $lists;
-
         $relation = new MailchimpFieldAgoraRelation();
         $this->relation = $relation->firstOrFail();
-
         $this->mailchimp = new \Mailchimp\Mailchimp($this->mail_api_key);
     }
 
@@ -44,11 +39,9 @@ class MailChimpController extends Controller
     {
         try {
             $result = $this->mailchimp->request('lists');
-
             return $result;
         } catch (Exception $ex) {
             dd($ex);
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -57,11 +50,9 @@ class MailChimpController extends Controller
     {
         try {
             $result = $this->mailchimp->request("lists/$this->list_id");
-
             return $result;
         } catch (Exception $ex) {
             dd($ex);
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -73,11 +64,10 @@ class MailChimpController extends Controller
             $merge_fields = $this->field($email);
             //dd($merge_fields);
             $result = $this->mailchimp->post("lists/$this->list_id/members", [
-                'status'        => $this->mailchimp_set->subscribe_status,
+                'status' => $this->mailchimp_set->subscribe_status,
                 'email_address' => $email,
-                'merge_fields'  => $merge_fields,
+                'merge_fields' => $merge_fields,
             ]);
-
             return $result;
         } catch (Exception $ex) {
             $exe = json_decode($ex->getMessage(), true);
@@ -95,20 +85,16 @@ class MailChimpController extends Controller
         try {
             $email = $request->input('email');
             $result = $this->mailchimp->post("lists/$this->list_id/members", [
-                'status'        => $this->mailchimp_set->subscribe_status,
+                'status' => $this->mailchimp_set->subscribe_status,
                 'email_address' => $email,
-
             ]);
-
             return redirect()->back()->with('success', 'email added to mailchimp');
         } catch (Exception $ex) {
             $exe = json_decode($ex->getMessage(), true);
             if ($exe['status'] == 400) {
                 $error = "$email is already subscribed to newsletter";
-
                 return redirect()->back()->with('warning', $error);
             }
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -152,7 +138,6 @@ class MailChimpController extends Controller
                 if ($relation->role) {
                     $merge_fields[$relation->role] = $user->role;
                 }
-
                 return $merge_fields;
             } else {
                 return redirect()->back()->with('fails', 'user not found');
@@ -167,11 +152,9 @@ class MailChimpController extends Controller
     {
         try {
             $result = $this->mailchimp->get("lists/$this->list_id/merge-fields");
-
             return $result;
         } catch (Exception $ex) {
             dd($ex);
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -194,19 +177,17 @@ class MailChimpController extends Controller
                 $required = $value->required;
                 $list_id = $value->list_id;
                 $tag = $value->tag;
-
                 $this->mailchimp_field_model->create([
                     'merge_id' => $merge_id,
-                    'tag'      => $tag,
-                    'name'     => $name,
-                    'type'     => $type,
+                    'tag' => $tag,
+                    'name' => $name,
+                    'type' => $type,
                     'required' => $required,
-                    'list_id'  => $list_id,
+                    'list_id' => $list_id,
                 ]);
             }
         } catch (Exception $ex) {
             dd($ex);
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -225,14 +206,13 @@ class MailChimpController extends Controller
                 $name = $list->name;
                 $list_id = $list->id;
                 $this->lists->create([
-                    'name'    => $name,
+                    'name' => $name,
                     'list_id' => $list_id,
                 ]);
             }
             //return redirect()->back()->with('success', \Lang::get('message.mailchimp-list-added-to-agora'));
         } catch (Exception $ex) {
             dd($ex);
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -242,11 +222,9 @@ class MailChimpController extends Controller
         try {
             $set = $this->mailchimp_set;
             $lists = $this->lists->lists('name', 'list_id')->toArray();
-
             return view('themes.default1.common.mailchimp.settings', compact('set', 'lists'));
         } catch (Exception $ex) {
             dd($ex);
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -260,11 +238,9 @@ class MailChimpController extends Controller
         try {
             $this->mailchimp_set->fill($request->input())->save();
             $this->addListsToAgora();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (Exception $ex) {
             dd($ex);
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -275,11 +251,9 @@ class MailChimpController extends Controller
             $model = $this->relation;
             $this->addFieldsToAgora();
             $mailchimp_fields = $this->mailchimp_field_model->where('list_id', $this->list_id)->lists('name', 'tag')->toArray();
-
             return view('themes.default1.common.mailchimp.map', compact('mailchimp_fields', 'model'));
         } catch (Exception $ex) {
             dd($ex);
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -288,11 +262,9 @@ class MailChimpController extends Controller
     {
         try {
             $this->relation->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (Exception $ex) {
             dd($ex);
-
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }

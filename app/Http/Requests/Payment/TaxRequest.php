@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\Payment;
 
 use App\Http\Requests\Request;
@@ -24,11 +23,11 @@ class TaxRequest extends Request
     public function rules()
     {
         return [
-            'name'    => 'required',
-            'rate'    => 'required|numeric',
-            'level'   => 'required|integer',
+            'name' => 'required',
+            'rate' => 'required|numeric',
+            'level' => 'required|integer',
             'country' => 'exists:countries,id',
-            'state'   => 'exists:states,id',
+            'state' => 'exists:states,id',
         ];
     }
 }

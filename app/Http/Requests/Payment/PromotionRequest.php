@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\Payment;
 
 use App\Http\Requests\Request;
@@ -24,10 +23,9 @@ class PromotionRequest extends Request
     public function rules()
     {
         return [
-            'code'    => 'required',
-            'type'    => 'required',
+            'code' => 'required',
+            'type' => 'required',
             'applied' => 'required',
-
         ];
     }
 }

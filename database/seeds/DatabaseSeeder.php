@@ -1,5 +1,4 @@
 <?php
-
 use App\Model\Common\Template;
 use App\Model\Common\TemplateType;
 use App\Model\Github\Github;
@@ -9,7 +8,6 @@ use App\Model\Payment\Promotion;
 use App\Model\Payment\PromotionType;
 use App\Model\Product\Product;
 use App\Model\Product\ProductGroup;
-use App\Model\Product\Subscription;
 use App\Model\Product\Type;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
@@ -24,42 +22,30 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         //Model::unguard();
-
         $this->call('PlanTableSeeder');
         $this->command->info('Plan table seeded!');
-
         $this->call('TemplateTypeTableSeeder');
         $this->command->info('Template Type table seeded!');
-
         $this->call('TemplateTableSeeder');
         $this->command->info('Template table seeded!');
-
         $this->call('GroupTableSeeder');
         $this->command->info('Product Group table seeded!');
-
         $this->call('ProductTypesTableSeeder');
         $this->command->info('Product Types table seeded!');
-
         $this->call('PromotionTypeTableSeeder');
         $this->command->info('Promotion Types table seeded!');
-
         $this->call('PromotionTableSeeder');
         $this->command->info('Promotion table seeded!');
-
         $this->call('CurrencyTableSeeder');
         $this->command->info('Currency table seeded!');
-
         $this->call('ProductTableSeeder');
         $this->command->info('Product table seeded!');
-
         $this->call('GitHubTableSeeder');
         $this->command->info('Github table seeded!');
-
         $this->call(CompanySize::class);
         $this->call(CompanyType::class);
         $this->call(SettingsSeeder::class);
         $this->call(FrontPageSeeder::class);
-
         \DB::unprepared(file_get_contents(storage_path('agora.sql')));
         \DB::unprepared(file_get_contents(storage_path('states.sql')));
     }
@@ -80,8 +66,8 @@ class PlanTableSeeder extends Seeder
             4 => ['name' => 'six months', 'days' => 180],
             5 => ['name' => 'one year', 'days' => 365],
             6 => ['name' => 'three year', 'days' => 1095],
-            ];
-            //var_dump($subcriptions);
+        ];
+        //var_dump($subcriptions);
         for ($i = 0; $i < count($subcriptions); $i++) {
             Plan::create(['id' => $i + 1, 'name' => $subcriptions[$i]['name'], 'days' => $subcriptions[$i]['days']]);
         }
@@ -98,13 +84,14 @@ class ProductTypesTableSeeder extends Seeder
         $types = [
             1 => ['name' => 'download'],
             0 => ['name' => 'SaaS'],
-            ];
-            //var_dump($subcriptions);
+        ];
+        //var_dump($subcriptions);
         for ($i = 0; $i < count($types); $i++) {
             Type::create(['id' => $i + 1, 'name' => $types[$i]['name']]);
         }
     }
 }
+
 class CurrencyTableSeeder extends Seeder
 {
     public function run()
@@ -146,7 +133,7 @@ class ProductTableSeeder extends Seeder
         \DB::table('products')->truncate();
         \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         Product::create(['id' => 1, 'name' => 'default', 'type' => 1, 'group' => 1]);
-         //Product::create(['id'=>2,'name'=>'none1','type'=>1,'group' =>1]);
+        //Product::create(['id'=>2,'name'=>'none1','type'=>1,'group' =>1]);
     }
 }
 
@@ -192,6 +179,7 @@ class TemplateTableSeeder extends Seeder
         Template::create(['id' => 1, 'name' => 'cart1', 'type' => 3, 'data' => '<div class="col-sm-6 col-md-3 col-lg-3"><div class="pricing-item"><div class="pricing-item-inner"><div class="pricing-wrap"><div class="pricing-icon"><i class="fa fa-credit-card-alt"></i></div><div class="pricing-title">{{title}}</div><div class="pricing-features font-alt"><ul class="sf-list pr-list"><li>{{feature}}</li></ul></div><div class="pricing-num"><sup>{{currency}}</sup>{{price}}</div><div class="pr-per">{{subscription}}</div><div class="pr-button"><a href="{{url}}" class="btn btn-mod">Buy Now</a></div></div> </div> </div></div>']);
     }
 }
+
 class GitHubTableSeeder extends Seeder
 {
     public function run()

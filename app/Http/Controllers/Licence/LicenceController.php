@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Licence;
 
 use App\Http\Controllers\Controller;
@@ -16,10 +15,8 @@ class LicenceController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('admin');
-
         $licence = new Licence();
         $this->licence = $licence;
-
         $licencedOrganization = new LicencedOrganization();
         $this->licencedOrganization = $licencedOrganization;
     }
@@ -36,13 +33,13 @@ class LicenceController extends Controller
     public function GetLicences()
     {
         return \Datatable::collection($this->licence->get())
-                        ->showColumns('name', 'description', 'number_of_sla', 'price')
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('licences/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('description')
-                        ->orderColumns('description')
-                        ->make();
+            ->showColumns('name', 'description', 'number_of_sla', 'price')
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('licences/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('description')
+            ->orderColumns('description')
+            ->make();
     }
 
     public function create()
@@ -51,8 +48,7 @@ class LicenceController extends Controller
             $productController = new \App\Http\Controllers\Product\ProductController();
             $url = $productController->GetMyUrl();
             $i = $this->licence->orderBy('created_at', 'desc')->first()->id + 1;
-            $cartUrl = $url.'/cart?id='.$i;
-
+            $cartUrl = $url . '/cart?id=' . $i;
             return view('themes.default1.licence.create', compact('cartUrl'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -63,7 +59,6 @@ class LicenceController extends Controller
     {
         try {
             $this->licence->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -74,7 +69,6 @@ class LicenceController extends Controller
     {
         try {
             $licence = $this->licence->where('id', $id)->first();
-
             return view('themes.default1.licence.edit', compact('licence'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -86,7 +80,6 @@ class LicenceController extends Controller
         try {
             $licence = $this->licence->where('id', $id)->first();
             $licence->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());

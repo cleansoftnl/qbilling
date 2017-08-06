@@ -1,5 +1,4 @@
 <?php
-
 namespace App;
 
 use Illuminate\Auth\Authenticatable;
@@ -11,15 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 //use Laravel\Cashier\Billable;
 //use LinkThrow\Billing\CustomerBillableTrait;
 //use App\Model\Common\Website;
-
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract
 {
     use Authenticatable,
         CanResetPassword;
 
-// use Billable;
+    // use Billable;
     // use CustomerBillableTrait;
-
     /**
      * The database table used by the model.
      *
@@ -36,7 +33,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'state', 'town', 'mobile',
         'email', 'password', 'role', 'active', 'profile_pic',
         'address', 'country', 'currency', 'timezone_id', 'mobile_code', 'bussiness',
-        'company_type', 'company_size', 'ip', 'mobile_verified', 'position', 'skype', 'manager', ];
+        'company_type', 'company_size', 'ip', 'mobile_verified', 'position', 'skype', 'manager',];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -81,10 +78,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if (\Auth::user()) {
             $tz = \Auth::user()->timezone()->first()->name;
             $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $value, 'UTC');
-
             return $date->setTimezone($tz);
         }
-
         return $value;
     }
 
@@ -92,18 +87,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         $image = \Gravatar::src($this->attributes['email']);
         if ($value) {
-            $file = public_path('dist/app/users/'.$value);
+            $file = public_path('dist/app/users/' . $value);
             if (is_file($file)) {
                 $mime = \File::mimeType($file);
                 $extension = \File::extension($file);
                 if (mime($mime) == 'image' && mime($extension) == 'image') {
-                    $image = asset('dist/app/users/'.$value);
+                    $image = asset('dist/app/users/' . $value);
                 } else {
                     unlink($file);
                 }
             }
         }
-
         return $image;
     }
 
@@ -120,7 +114,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ($bussiness) {
             $name = $bussiness->name;
         }
-
         return $name;
     }
 
@@ -131,7 +124,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $this->invoice()->delete();
         $this->order()->delete();
         $this->subscription()->delete();
-
         return parent::delete();
     }
 

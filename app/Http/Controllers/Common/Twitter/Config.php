@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\Common\Twitter;
-
 /**
  * Handle setting and storing config for TwitterOAuth.
  *
@@ -37,8 +35,8 @@ class Config
      */
     public function setTimeouts($connectionTimeout, $timeout)
     {
-        $this->connectionTimeout = (int) $connectionTimeout;
-        $this->timeout = (int) $timeout;
+        $this->connectionTimeout = (int)$connectionTimeout;
+        $this->timeout = (int)$timeout;
     }
 
     /**
@@ -46,7 +44,7 @@ class Config
      */
     public function setDecodeJsonAsArray($value)
     {
-        $this->decodeJsonAsArray = (bool) $value;
+        $this->decodeJsonAsArray = (bool)$value;
     }
 
     /**
@@ -54,7 +52,7 @@ class Config
      */
     public function setUserAgent($userAgent)
     {
-        $this->userAgent = (string) $userAgent;
+        $this->userAgent = (string)$userAgent;
     }
 
     /**
@@ -72,6 +70,6 @@ class Config
      */
     public function setGzipEncoding($gzipEncoding)
     {
-        $this->gzipEncoding = (bool) $gzipEncoding;
+        $this->gzipEncoding = (bool)$gzipEncoding;
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Plugins\Paypal\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -31,7 +30,6 @@ class ProcessController extends Controller
                 \Cart::clear();
                 \Session::set('invoiceid', $order->id);
             }
-
             if ($request->input('payment_gateway') == 'paypal') {
                 if (!\Schema::hasTable('paypal')) {
                     throw new \Exception('Paypal is not configured');
@@ -81,26 +79,24 @@ class ProcessController extends Controller
                 if ($invoice->invoiceItem()->first()) {
                     $product_name = str_replace(' ', '-', $invoice->invoiceItem()->first()->product_name);
                 }
-
                 $data = [
-                    'business'      => $business,
-                    'cmd'           => $cmd,
-                    'return'        => $return,
+                    'business' => $business,
+                    'cmd' => $cmd,
+                    'return' => $return,
                     'cancel_return' => $cancel_return,
-                    'notify_url'    => $notify_url,
-                    'image_url'     => $image_url,
-                    'rm'            => $rm,
+                    'notify_url' => $notify_url,
+                    'image_url' => $image_url,
+                    'rm' => $rm,
                     'currency_code' => 'USD', //$currency_code,
-                    'invoice'       => $invoice_id,
-                    'first_name'    => $first_name,
-                    'last_name'     => $last_name,
-                    'address1'      => $address1,
-                    'city'          => $city,
-                    'zip'           => $zip,
-                    'email'         => $email,
-                    'item_name'     => $product_name,
+                    'invoice' => $invoice_id,
+                    'first_name' => $first_name,
+                    'last_name' => $last_name,
+                    'address1' => $address1,
+                    'city' => $city,
+                    'zip' => $zip,
+                    'email' => $email,
+                    'item_name' => $product_name,
                 ];
-
                 $items = $invoice->invoiceItem()->get()->toArray();
                 //dd($items);
                 if (count($items) > 0) {
@@ -108,7 +104,7 @@ class ProcessController extends Controller
                         $n = $i + 1;
                         $item = [
                             "item_name_$n" => $items[$i]['product_name'],
-                            "quantity_$n"  => $items[$i]['quantity'],
+                            "quantity_$n" => $items[$i]['quantity'],
                         ];
                     }
                     $data = array_merge($data, $item);
@@ -116,7 +112,6 @@ class ProcessController extends Controller
                     $data = array_merge($data, $total);
                 }
             }
-
             return $data;
         } catch (\Exception $ex) {
             dd($ex);
@@ -162,7 +157,7 @@ class ProcessController extends Controller
                 echo "<input type=hidden name=$key value=$value>";
             }
             echo '</form>';
-            echo"<script language='javascript'>document.redirect.submit();</script>";
+            echo "<script language='javascript'>document.redirect.submit();</script>";
         } catch (\Exception $ex) {
             dd($ex);
             throw new \Exception($ex->getMessage(), $ex->getCode(), $ex->getPrevious());
@@ -172,7 +167,7 @@ class ProcessController extends Controller
     public function middlePage($data)
     {
         try {
-            $path = app_path().'/Plugins/Paypal/views';
+            $path = app_path() . '/Plugins/Paypal/views';
             \View::addNamespace('plugins', $path);
             echo view('plugins::middle-page', compact('data'));
         } catch (\Exception $ex) {
@@ -186,7 +181,7 @@ class ProcessController extends Controller
         $url = 'checkout';
         if (\Session::has('invoiceid')) {
             $id = \Session::get('invoiceid');
-            $url = 'paynow/'.$id;
+            $url = 'paynow/' . $id;
         }
         if (\Cart::getContent()->count() > 0) {
             \Cart::clear();
@@ -195,7 +190,6 @@ class ProcessController extends Controller
             $this->success($id);
             \Session::forget('invoiceid');
         }
-
         return redirect($url)->with('success', 'Thank you for your order. Your transaction is successful. We will be processing your order soon.');
     }
 
@@ -204,10 +198,9 @@ class ProcessController extends Controller
         $url = 'checkout';
         if (\Session::has('invoiceid')) {
             $id = \Session::get('invoiceid');
-            $url = 'paynow/'.$id;
+            $url = 'paynow/' . $id;
         }
         \Session::forget('invoiceid');
-
         return redirect($url)->with('fails', 'Thank you for your order. However,the transaction has been declined. Try again.');
     }
 

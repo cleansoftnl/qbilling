@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Github;
 
 use App\BaseModel;

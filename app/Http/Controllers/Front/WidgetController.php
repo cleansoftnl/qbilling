@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
@@ -14,7 +13,6 @@ class WidgetController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('admin');
-
         $widget = new Widgets();
         $this->widget = $widget;
     }
@@ -31,19 +29,19 @@ class WidgetController extends Controller
     public function GetPages()
     {
         return \Datatable::collection($this->widget->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->showColumns('name', 'type', 'created_at')
-                        ->addColumn('content', function ($model) {
-                            return str_limit($model->content, 10, '...');
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('widgets/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name', 'content')
-                        ->orderColumns('name')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->showColumns('name', 'type', 'created_at')
+            ->addColumn('content', function ($model) {
+                return str_limit($model->content, 10, '...');
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('widgets/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name', 'content')
+            ->orderColumns('name')
+            ->make();
     }
 
     public function create()
@@ -69,14 +67,12 @@ class WidgetController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'   => 'required',
-            'publish'=> 'required',
-
-            'content'=> 'required',
+            'name' => 'required',
+            'publish' => 'required',
+            'content' => 'required',
         ]);
         try {
             $this->widget->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -86,15 +82,13 @@ class WidgetController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-            'name'   => 'required',
-            'publish'=> 'required',
-
-            'content'=> 'required',
+            'name' => 'required',
+            'publish' => 'required',
+            'content' => 'required',
         ]);
         try {
             $widget = $this->widget->where('id', $id)->first();
             $widget->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -121,34 +115,34 @@ class WidgetController extends Controller
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                         //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                     }
                 }
                 echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
                 //echo \Lang::get('message.select-a-row');
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }

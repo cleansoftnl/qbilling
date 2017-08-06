@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Order;
 
 use App\BaseModel;

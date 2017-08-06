@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Product;
 
 use Illuminate\Database\Eloquent\Model;
@@ -25,12 +24,12 @@ class Subscription extends Model
         return $this->belongsTo('App\Model\Order\Order');
     }
 
-//    public function delete() {
-//
-//
-//        $this->Plan()->delete();
-//
-//
-//        return parent::delete();
-//    }
+    //    public function delete() {
+    //
+    //
+    //        $this->Plan()->delete();
+    //
+    //
+    //        return parent::delete();
+    //    }
 }

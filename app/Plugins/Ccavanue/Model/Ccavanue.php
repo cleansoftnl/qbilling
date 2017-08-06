@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Plugins\Ccavanue\Model;
 
 use Illuminate\Database\Eloquent\Model;

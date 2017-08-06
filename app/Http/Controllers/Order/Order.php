@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
@@ -17,7 +16,6 @@ class Order extends Controller
     public function getOrder()
     {
         $order = self::find($this->orderid);
-
         return $order;
     }
 
@@ -26,7 +24,6 @@ class Order extends Controller
         $order = $this->getOrder();
         if ($order) {
             $subscription = $order->subscription;
-
             return $subscription;
         }
     }
@@ -36,7 +33,6 @@ class Order extends Controller
         $order = $this->getOrder();
         if ($order) {
             $product = $order->product;
-
             return $product;
         }
     }
@@ -46,7 +42,6 @@ class Order extends Controller
         $subscription = $this->getSubscription();
         if ($subscription) {
             $plan = $subscription->plan;
-
             return $plan;
         }
     }
@@ -58,7 +53,6 @@ class Order extends Controller
         if ($plan) {
             $days = $plan->days;
         }
-
         return $days;
     }
 
@@ -68,7 +62,6 @@ class Order extends Controller
         if ($subscription) {
             $version = $subscription->vesion;
         }
-
         return $version;
     }
 
@@ -83,7 +76,6 @@ class Order extends Controller
                 $expired = true;
             }
         }
-
         return $expired;
     }
 
@@ -94,7 +86,6 @@ class Order extends Controller
         if ($product) {
             $name = $product->name;
         }
-
         return $name;
     }
 
@@ -111,7 +102,6 @@ class Order extends Controller
                 }
             }
         }
-
         return $check;
     }
 }

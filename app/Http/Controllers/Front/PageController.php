@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
@@ -14,7 +13,6 @@ class PageController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('admin');
-
         $page = new FrontendPage();
         $this->page = $page;
     }
@@ -31,26 +29,25 @@ class PageController extends Controller
     public function GetPages()
     {
         return \Datatable::collection($this->page->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->showColumns('name', 'url', 'created_at')
-                        ->addColumn('content', function ($model) {
-                            return str_limit($model->content, 10, '...');
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('pages/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name', 'content')
-                        ->orderColumns('name')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->showColumns('name', 'url', 'created_at')
+            ->addColumn('content', function ($model) {
+                return str_limit($model->content, 10, '...');
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('pages/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name', 'content')
+            ->orderColumns('name')
+            ->make();
     }
 
     public function create()
     {
         try {
             $parents = $this->page->lists('name', 'id')->toArray();
-
             return view('themes.default1.front.page.create', compact('parents'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -62,7 +59,6 @@ class PageController extends Controller
         try {
             $page = $this->page->where('id', $id)->first();
             $parents = $this->page->where('id', '!=', $id)->lists('name', 'id')->toArray();
-
             return view('themes.default1.front.page.edit', compact('parents', 'page'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -72,16 +68,14 @@ class PageController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'    => 'required',
+            'name' => 'required',
             'publish' => 'required',
-            'slug'    => 'required',
-            'url'     => 'required',
+            'slug' => 'required',
+            'url' => 'required',
             'content' => 'required',
         ]);
-
         try {
             $this->page->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -91,16 +85,15 @@ class PageController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-            'name'    => 'required',
+            'name' => 'required',
             'publish' => 'required',
-            'slug'    => 'required',
-            'url'     => 'required',
+            'slug' => 'required',
+            'url' => 'required',
             'content' => 'required',
         ]);
         try {
             $page = $this->page->where('id', $id)->first();
             $page->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -112,10 +105,9 @@ class PageController extends Controller
         $productController = new \App\Http\Controllers\Product\ProductController();
         $url = $productController->GetMyUrl();
         $segment = $this->Addsegment(['public/pages']);
-        $url = $url.$segment;
-
+        $url = $url . $segment;
         $slug = str_slug($slug, '-');
-        echo $url.'/'.$slug;
+        echo $url . '/' . $slug;
     }
 
     public function GetSlug($slug)
@@ -128,9 +120,8 @@ class PageController extends Controller
     {
         $segment = '';
         foreach ($segments as $seg) {
-            $segment .= '/'.$seg;
+            $segment .= '/' . $seg;
         }
-
         return $segment;
     }
 
@@ -139,12 +130,10 @@ class PageController extends Controller
         // dd($request->all());
         if ($request->has('slug')) {
             $slug = $request->input('slug');
-
             return $this->GetSlug($slug);
         }
         if ($request->has('url')) {
             $slug = $request->input('url');
-
             return $this->GetPageUrl($slug);
         }
     }
@@ -156,7 +145,6 @@ class PageController extends Controller
             if ($page->type == 'cart') {
                 return $this->cart();
             }
-
             return view('themes.default1.front.page.show', compact('page'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -183,34 +171,34 @@ class PageController extends Controller
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                         //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                     }
                 }
                 echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
                 //echo \Lang::get('message.select-a-row');
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }
@@ -220,7 +208,6 @@ class PageController extends Controller
         try {
             $search = $request->input('q');
             $model = $this->Result($search, $this->page);
-
             return view('themes.default1.front.page.search', compact('model'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -230,8 +217,7 @@ class PageController extends Controller
     public function Result($search, $model)
     {
         try {
-            $model = $model->where('name', 'like', '%'.$search.'%')->orWhere('content', 'like', '%'.$search.'%')->paginate(10);
-
+            $model = $model->where('name', 'like', '%' . $search . '%')->orWhere('content', 'like', '%' . $search . '%')->paginate(10);
             return $model->setPath('search');
         } catch (\Exception $ex) {
             //dd($ex);
@@ -252,7 +238,6 @@ class PageController extends Controller
             $array2 = $this->valueArray($array[$i]);
             $result .= str_replace($array1, $array2, $data);
         }
-
         return $result;
     }
 
@@ -297,19 +282,17 @@ class PageController extends Controller
                 $trasform[$value['id']]['name'] = $value['name'];
                 $trasform[$value['id']]['feature'] = $value['description'];
                 $trasform[$value['id']]['subscription'] = $temp_controller->plans($value['shoping_cart_link'], $value['id']);
-
                 $trasform[$value['id']]['url'] = "<input type='submit' value='Buy' class='btn btn-primary'></form>";
             }
             $template = $this->transform('cart', $data, $trasform);
         }
-
         return view('themes.default1.common.template.shoppingcart', compact('template', 'trasform'));
     }
 
     public function checkConfigKey($config, $transform)
     {
         $result = [];
-//        dd($config);
+        //        dd($config);
         if (count($config) > 0) {
             foreach ($config as $key => $value) {
                 if (array_key_exists($key, $transform)) {
@@ -317,7 +300,6 @@ class PageController extends Controller
                 }
             }
         }
-
         return $result;
     }
 
@@ -327,7 +309,6 @@ class PageController extends Controller
         foreach ($array as $key => $value) {
             $result[] = $key;
         }
-
         return $result;
     }
 
@@ -337,7 +318,6 @@ class PageController extends Controller
         foreach ($array as $key => $value) {
             $result[] = $value;
         }
-
         return $result;
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Common;
 
 use App\Http\Controllers\Controller;
@@ -22,16 +21,12 @@ class CronController extends Controller
     {
         $subscription = new Subscription();
         $this->sub = $subscription;
-
         $order = new Order();
         $this->order = $order;
-
         $user = new User();
         $this->user = $user;
-
         $template = new Template();
         $this->template = $template;
-
         $invoice = new Invoice();
         $this->invoice = $invoice;
     }
@@ -40,13 +35,11 @@ class CronController extends Controller
     {
         $plus29days = new Carbon('+29 days');
         $plus31days = new Carbon('+31 days');
-
         $sub = $this->sub
-                ->where('ends_at', '!=', '0000-00-00 00:00:00')
-                ->whereNotNull('ends_at')
-                ->whereBetween('ends_at', [$plus29days, $plus31days]);
+            ->where('ends_at', '!=', '0000-00-00 00:00:00')
+            ->whereNotNull('ends_at')
+            ->whereBetween('ends_at', [$plus29days, $plus31days]);
         //dd($sub->get());
-
         return $sub;
     }
 
@@ -55,10 +48,9 @@ class CronController extends Controller
         $plus14days = new Carbon('+14 days');
         $plus16days = new Carbon('+16 days');
         $sub = $this->sub
-                ->where('ends_at', '!=', '0000-00-00 00:00:00')
-                ->whereNotNull('ends_at')
-                ->whereBetween('ends_at', [$plus14days, $plus16days]);
-
+            ->where('ends_at', '!=', '0000-00-00 00:00:00')
+            ->whereNotNull('ends_at')
+            ->whereBetween('ends_at', [$plus14days, $plus16days]);
         return $sub;
     }
 
@@ -67,10 +59,9 @@ class CronController extends Controller
         $yesterday = new Carbon('-2 days');
         $today = new Carbon('today');
         $sub = $this->sub
-                ->where('ends_at', '!=', '0000-00-00 00:00:00')
-                ->whereNotNull('ends_at')
-                ->whereBetween('ends_at', [$yesterday, $today]);
-
+            ->where('ends_at', '!=', '0000-00-00 00:00:00')
+            ->whereNotNull('ends_at')
+            ->whereBetween('ends_at', [$yesterday, $today]);
         return $sub;
     }
 
@@ -79,10 +70,9 @@ class CronController extends Controller
         $yesterday = new Carbon('yesterday');
         $tomorrow = new Carbon('tomorrow');
         $sub = $this->sub
-                ->where('ends_at', '!=', '0000-00-00 00:00:00')
-                ->whereNotNull('ends_at')
-                ->whereBetween('ends_at', [$yesterday, $tomorrow]);
-
+            ->where('ends_at', '!=', '0000-00-00 00:00:00')
+            ->whereNotNull('ends_at')
+            ->whereBetween('ends_at', [$yesterday, $tomorrow]);
         return $sub;
     }
 
@@ -91,10 +81,9 @@ class CronController extends Controller
         $yesterday = new Carbon('today');
         $tomorrow = new Carbon('+2 days');
         $sub = $this->sub
-                ->where('ends_at', '!=', '0000-00-00 00:00:00')
-                ->whereNotNull('ends_at')
-                ->whereBetween('ends_at', [$yesterday, $tomorrow]);
-
+            ->where('ends_at', '!=', '0000-00-00 00:00:00')
+            ->whereNotNull('ends_at')
+            ->whereBetween('ends_at', [$yesterday, $tomorrow]);
         return $sub;
     }
 
@@ -102,12 +91,11 @@ class CronController extends Controller
     {
         $yesterday = new Carbon('today');
         $sub = $this->sub
-                ->where('order_id', $orderid)
-                ->where('ends_at', '!=', '0000-00-00 00:00:00')
-                ->whereNotNull('ends_at')
-                ->where('ends_at', '<', $yesterday)
-                ->first();
-
+            ->where('order_id', $orderid)
+            ->where('ends_at', '!=', '0000-00-00 00:00:00')
+            ->whereNotNull('ends_at')
+            ->where('ends_at', '<', $yesterday)
+            ->first();
         return $sub;
     }
 
@@ -123,7 +111,6 @@ class CronController extends Controller
                 $users[$key]['subscription'] = $value;
             }
         }
-
         return $users;
     }
 
@@ -138,7 +125,6 @@ class CronController extends Controller
                 $users[$key]['subscription'] = $value;
             }
         }
-
         return $users;
     }
 
@@ -153,7 +139,6 @@ class CronController extends Controller
                 $users[$key]['subscription'] = $value;
             }
         }
-
         return $users;
     }
 
@@ -168,7 +153,6 @@ class CronController extends Controller
                 $users[$key]['subscription'] = $value;
             }
         }
-
         return $users;
     }
 
@@ -183,7 +167,6 @@ class CronController extends Controller
                 $users[$key]['subscription'] = $value;
             }
         }
-
         return $users;
     }
 
@@ -195,7 +178,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['users'];
         }
-
         return $users;
     }
 
@@ -206,7 +188,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['users'];
         }
-
         return $users;
     }
 
@@ -217,7 +198,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['users'];
         }
-
         return $users;
     }
 
@@ -228,7 +208,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['users'];
         }
-
         return $users;
     }
 
@@ -239,7 +218,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['users'];
         }
-
         return $users;
     }
 
@@ -250,7 +228,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['orders'];
         }
-
         return $users;
     }
 
@@ -261,7 +238,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['orders'];
         }
-
         return $users;
     }
 
@@ -272,7 +248,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['orders'];
         }
-
         return $users;
     }
 
@@ -283,7 +258,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['orders'];
         }
-
         return $users;
     }
 
@@ -294,7 +268,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['orders'];
         }
-
         return $users;
     }
 
@@ -305,7 +278,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['subscription'];
         }
-
         return $users;
     }
 
@@ -316,7 +288,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['subscription'];
         }
-
         return $users;
     }
 
@@ -327,7 +298,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['subscription'];
         }
-
         return $users;
     }
 
@@ -338,7 +308,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['subscription'];
         }
-
         return $users;
     }
 
@@ -349,7 +318,6 @@ class CronController extends Controller
         if (count($users) > 0) {
             return $users[0]['subscription'];
         }
-
         return $users;
     }
 
@@ -371,7 +339,6 @@ class CronController extends Controller
         if (count($this->getPlus1Users())) {
             array_push($users, $this->getPlus1Users());
         }
-
         return $users;
     }
 
@@ -381,36 +348,30 @@ class CronController extends Controller
         if (count($this->get30DaysSubscription())) {
             array_push($sub, $this->get30DaysSubscription());
         }
-
         if (count($this->get15DaysUsers())) {
             array_push($sub, $this->get15DaysSubscription());
         }
-
         if (count($this->get1DaysUsers())) {
             array_push($sub, $this->get1DaysSubscription());
         }
-
         if (count($this->get0DaysUsers())) {
             array_push($sub, $this->get0DaysSubscription());
         }
         if (count($this->getPlus1Users())) {
             array_push($sub, $this->getPlus1Subscription());
         }
-
         return $sub;
     }
 
     public function getUserById($id)
     {
         $user = $this->user->find($id);
-
         return $user;
     }
 
     public function getOrderById($id)
     {
         $order = $this->order->find($id);
-
         return $order;
     }
 
@@ -418,7 +379,6 @@ class CronController extends Controller
     {
         $invoice = $this->invoice->find($invoiceid);
         $item_id = $invoice->invoiceItem()->first();
-
         return $item_id;
     }
 
@@ -426,7 +386,6 @@ class CronController extends Controller
     {
         $order = $this->order->find($orderid);
         $invoice = $order->invoice()->first();
-
         return $invoice;
     }
 
@@ -467,11 +426,11 @@ class CronController extends Controller
         $data = $template->data;
         $date = date_create($end);
         $end = date_format($date, 'l, F j, Y H:m A');
-        $replace = ['name' => ucfirst($user->first_name).' '.ucfirst($user->last_name),
-            'expiry'       => $end,
-            'product'      => $product,
-            'number'       => $order->number,
-            'url'          => $url,
+        $replace = ['name' => ucfirst($user->first_name) . ' ' . ucfirst($user->last_name),
+            'expiry' => $end,
+            'product' => $product,
+            'number' => $order->number,
+            'url' => $url,
         ];
         $type = '';
         if ($template) {
@@ -482,7 +441,6 @@ class CronController extends Controller
         //dd([$from, $to, $data, $subject, $replace,$type]);
         $templateController = new \App\Http\Controllers\Common\TemplateController();
         $mail = $templateController->mailing($from, $to, $data, $subject, $replace, $type);
-
         return $mail;
     }
 }

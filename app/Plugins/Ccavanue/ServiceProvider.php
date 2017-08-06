@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Plugins\Ccavanue;
-
 class ServiceProvider extends \App\Plugins\ServiceProvider
 {
     public function register()

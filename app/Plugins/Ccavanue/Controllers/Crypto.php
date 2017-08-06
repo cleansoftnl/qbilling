@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Plugins\Ccavanue\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -7,7 +6,6 @@ use App\Http\Controllers\Controller;
 class Crypto extends Controller
 {
     //public error_reporting(0);
-
     public function encrypt($plainText, $key)
     {
         $secretKey = $this->hextobin(md5($key));
@@ -19,7 +17,6 @@ class Crypto extends Controller
             $encryptedText = mcrypt_generic($openMode, $plainPad);
             mcrypt_generic_deinit($openMode);
         }
-
         return bin2hex($encryptedText);
     }
 
@@ -33,21 +30,17 @@ class Crypto extends Controller
         $decryptedText = mdecrypt_generic($openMode, $encryptedText);
         $decryptedText = rtrim($decryptedText, "\0");
         mcrypt_generic_deinit($openMode);
-
         return $decryptedText;
     }
 
     //*********** Padding Function *********************
-
-     public function pkcs5_pad($plainText, $blockSize)
-     {
-         $pad = $blockSize - (strlen($plainText) % $blockSize);
-
-         return $plainText.str_repeat(chr($pad), $pad);
-     }
+    public function pkcs5_pad($plainText, $blockSize)
+    {
+        $pad = $blockSize - (strlen($plainText) % $blockSize);
+        return $plainText . str_repeat(chr($pad), $pad);
+    }
 
     //********** Hexadecimal to Binary function for php 4.0 version ********
-
     public function hextobin($hexString)
     {
         $length = strlen($hexString);
@@ -61,10 +54,8 @@ class Crypto extends Controller
             } else {
                 $binString .= $packedString;
             }
-
             $count += 2;
         }
-
         return $binString;
     }
 }

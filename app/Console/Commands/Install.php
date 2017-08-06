@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -40,14 +39,14 @@ class Install extends Command
         if ($this->confirm('Do you want to intall Agora?')) {
             $this->createEnv();
             $default = $this->choice(
-                    'Which sql engine would you like to use?', ['mysql']
+                'Which sql engine would you like to use?', ['mysql']
             );
             $host = $this->ask('Enter your sql host');
             $database = $this->ask('Enter your database name');
             $dbusername = $this->ask('Enter your database username');
             $dbpassword = $this->ask('Enter your database password (blank if not entered)', false);
             $port = $this->ask('Enter your sql port (blank if not entered)', false);
-            $array = ['DB_TYPE'=>$default, 'DB_HOST'=>$host, 'DB_DATABASE'=>$database, 'DB_USERNAME'=>$dbusername, 'DB_PASSWORD'=>$dbpassword];
+            $array = ['DB_TYPE' => $default, 'DB_HOST' => $host, 'DB_DATABASE' => $database, 'DB_USERNAME' => $dbusername, 'DB_PASSWORD' => $dbpassword];
             $this->updateDBEnv($array);
             $this->call('key:generate');
             $this->call('migrate');
@@ -57,8 +56,8 @@ class Install extends Command
             $data = [
                 [
                     'user_name' => 'demo',
-                    'email'     => 'demo@admin.com',
-                    'password'  => 'password',
+                    'email' => 'demo@admin.com',
+                    'password' => 'password',
                 ],
             ];
             $this->table($headers, $data);
@@ -77,7 +76,7 @@ APP_URL=http://localhost
 CACHE_DRIVER=file
 SESSION_DRIVER=file
 QUEUE_DRIVER=sync';
-        $env = base_path().DIRECTORY_SEPARATOR.'.env';
+        $env = base_path() . DIRECTORY_SEPARATOR . '.env';
         if (is_file($env)) {
             unlink($env);
         }
@@ -88,10 +87,10 @@ QUEUE_DRIVER=sync';
 
     public function updateEnv($key, $value)
     {
-        $env = base_path().DIRECTORY_SEPARATOR.'.env';
+        $env = base_path() . DIRECTORY_SEPARATOR . '.env';
         if (is_file($env)) {
             $contents = "$key=$value";
-            file_put_contents($env, $contents.PHP_EOL, FILE_APPEND | LOCK_EX);
+            file_put_contents($env, $contents . PHP_EOL, FILE_APPEND | LOCK_EX);
         } else {
             throw new Exception('.env not found');
         }
@@ -109,17 +108,16 @@ QUEUE_DRIVER=sync';
         \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \DB::table('users')->truncate();
         \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
         return \App\User::create([
-                    'first_name'      => 'Demo',
-                    'last_name'       => 'Admin',
-                    'user_name'       => 'demo',
-                    'email'           => 'demo@admin.com',
-                    'role'            => 'admin',
-                    'password'        => \Hash::make('password'),
-                    'active'          => 1,
-                    'mobile_verified' => 1,
-                    'currency'        => 'INR',
+            'first_name' => 'Demo',
+            'last_name' => 'Admin',
+            'user_name' => 'demo',
+            'email' => 'demo@admin.com',
+            'role' => 'admin',
+            'password' => \Hash::make('password'),
+            'active' => 1,
+            'mobile_verified' => 1,
+            'currency' => 'INR',
         ]);
     }
 }

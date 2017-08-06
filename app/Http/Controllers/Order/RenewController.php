@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
@@ -29,22 +28,16 @@ class RenewController extends Controller
     {
         $sub = new Subscription();
         $this->sub = $sub;
-
         $plan = new Plan();
         $this->plan = $plan;
-
         $order = new Order();
         $this->order = $order;
-
         $invoice = new Invoice();
         $this->invoice = $invoice;
-
         $item = new InvoiceItem();
         $this->item = $item;
-
         $product = new Product();
         $this->product = $product;
-
         $user = new User();
         $this->user = $user;
     }
@@ -60,7 +53,6 @@ class RenewController extends Controller
             $sub->ends_at = $ends;
             $sub->save();
             $this->invoiceBySubscriptionId($id, $planid, $cost);
-
             return $sub;
         } catch (Exception $ex) {
             dd($ex);
@@ -87,13 +79,11 @@ class RenewController extends Controller
     }
 
     //Tuesday, June 13, 2017 08:06 AM
-
     public function invoiceBySubscriptionId($id, $planid, $cost)
     {
         try {
             $sub = $this->sub->find($id);
             $order_id = $sub->order_id;
-
             return $this->getInvoiceByOrderId($order_id, $planid, $cost);
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage());
@@ -120,7 +110,6 @@ class RenewController extends Controller
             if (!$product) {
                 throw new Exception('Product has removed from database');
             }
-
             return $this->generateInvoice($product, $user, $orderid, $planid, $cost, $code = '');
         } catch (Exception $ex) {
             dd($ex);
@@ -180,16 +169,15 @@ class RenewController extends Controller
             $number = rand(11111111, 99999999);
             $date = \Carbon\Carbon::now();
             $invoice = $this->invoice->create([
-                'user_id'     => $user->id,
-                'number'      => $number,
-                'date'        => $date,
+                'user_id' => $user->id,
+                'number' => $number,
+                'date' => $date,
                 'grand_total' => $cost,
-                'currency'    => $currency,
-                'status'      => 'pending',
+                'currency' => $currency,
+                'status' => 'pending',
             ]);
             $this->createOrderInvoiceRelation($orderid, $invoice->id);
             $items = $controller->createInvoiceItemsByAdmin($invoice->id, $product->id, $code, $product_cost, $currency, $qty = 1);
-
             return $items;
         } catch (Exception $ex) {
             dd($ex);
@@ -202,7 +190,7 @@ class RenewController extends Controller
         try {
             $relation = new \App\Model\Order\OrderInvoiceRelation();
             $relation->create([
-                'order_id'   => $orderid,
+                'order_id' => $orderid,
                 'invoice_id' => $invoiceid,
             ]);
         } catch (Exception $ex) {
@@ -226,7 +214,6 @@ class RenewController extends Controller
             if (!$cost) {
                 $cost = $price->regular_price;
             }
-
             return $cost;
         } catch (Exception $ex) {
             dd($ex);
@@ -241,7 +228,6 @@ class RenewController extends Controller
             if (!$user) {
                 throw new Exception('User has removed from database');
             }
-
             return $user->currency;
         } catch (Exception $ex) {
             dd($ex);
@@ -260,13 +246,12 @@ class RenewController extends Controller
             if (!empty($tax)) {
                 foreach ($tax as $key => $value) {
                     //dd($value);
-                    $tax_name .= $value['name'].',';
-                    $tax_rate .= $value['rate'].',';
+                    $tax_name .= $value['name'] . ',';
+                    $tax_rate .= $value['rate'] . ',';
                 }
             }
             //dd('dsjcgv');
             $grand_total = $controller->calculateTotal($tax_rate, $cost);
-
             return \App\Http\Controllers\Front\CartController::rounding($grand_total);
         } catch (Exception $ex) {
         }
@@ -275,10 +260,10 @@ class RenewController extends Controller
     public function renew($id, Request $request)
     {
         $this->validate($request, [
-            'plan'           => 'required',
+            'plan' => 'required',
             'payment_method' => 'required',
-            'cost'           => 'required',
-            'code'           => 'exists:promotions,code',
+            'cost' => 'required',
+            'code' => 'exists:promotions,code',
         ]);
         try {
             $planid = $request->input('plan');
@@ -286,11 +271,9 @@ class RenewController extends Controller
             $code = $request->input('code');
             $cost = $request->input('cost');
             $renew = $this->renewBySubId($id, $planid, $payment_method, $cost, $code = '');
-
             if ($renew) {
                 return redirect()->back()->with('success', 'Renewed Successfully');
             }
-
             return redirect()->back()->with('fails', 'Can not Process');
         } catch (Exception $ex) {
             return redirect()->back()->back()->with('fails', $ex->getMessage());
@@ -303,7 +286,6 @@ class RenewController extends Controller
             $sub = $this->sub->find($id);
             $userid = $sub->user_id;
             $plans = $this->plan->lists('name', 'id')->toArray();
-
             return view('themes.default1.renew.renew', compact('id', 'plans', 'userid'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -315,7 +297,6 @@ class RenewController extends Controller
         try {
             $planid = $request->input('plan');
             $userid = $request->input('user');
-
             return $this->planCost($planid, $userid);
         } catch (Exception $ex) {
         }
@@ -327,7 +308,6 @@ class RenewController extends Controller
             $currency = $this->getUserCurrencyById($userid);
             $plan = $this->plan->find($planid);
             $price = $plan->planPrice()->where('currency', $currency)->first()->renew_price;
-
             return $price;
         } catch (Exception $ex) {
         }
@@ -336,10 +316,10 @@ class RenewController extends Controller
     public function renewByClient($id, Request $request)
     {
         $this->validate($request, [
-            'plan'           => 'required',
+            'plan' => 'required',
             'payment_method' => 'required',
-            'cost'           => 'required',
-            'code'           => 'exists:promotions,code',
+            'cost' => 'required',
+            'code' => 'exists:promotions,code',
         ]);
         try {
             $planid = $request->input('plan');
@@ -349,8 +329,7 @@ class RenewController extends Controller
             $items = $this->invoiceBySubscriptionId($id, $planid, $cost);
             $invoiceid = $items->invoice_id;
             $this->setSession($id, $planid);
-
-            return redirect('paynow/'.$invoiceid);
+            return redirect('paynow/' . $invoiceid);
         } catch (Exception $ex) {
         }
     }
@@ -374,7 +353,6 @@ class RenewController extends Controller
         if (Session::has('subscription_id') && Session::has('plan_id')) {
             $res = true;
         }
-
         return $res;
     }
 
@@ -382,7 +360,6 @@ class RenewController extends Controller
     {
         $date = Carbon::parse($end);
         $expiry_date = $date->addDay($days);
-
         return $expiry_date;
     }
 }

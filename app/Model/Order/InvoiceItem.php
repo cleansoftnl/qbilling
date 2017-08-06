@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Order;
 
 use App\BaseModel;
@@ -24,7 +23,6 @@ class InvoiceItem extends BaseModel
         if (!$domain) {
             $domain = $pieces['path'];
         }
-
         return strtolower($domain);
     }
 }

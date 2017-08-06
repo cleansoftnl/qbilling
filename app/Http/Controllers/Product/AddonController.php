@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
@@ -42,26 +41,25 @@ class AddonController extends Controller
     public function GetAddons()
     {
         return \Datatable::collection($this->addon->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->showColumns('name', 'regular_price', 'selling_price')
-                        ->addColumn('associated', function ($model) {
-                            $relations = new ProductAddonRelation();
-                            $relations = $relations->where('addon_id', $model->id)->get();
-                            $products = [];
-                            foreach ($relations as $key => $relation) {
-                                $products[$key] = $this->product->where('id', $relation->product_id)->first()->name;
-                            }
-
-                            return implode(',', $products);
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('addons/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name')
-                        ->orderColumns('name')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->showColumns('name', 'regular_price', 'selling_price')
+            ->addColumn('associated', function ($model) {
+                $relations = new ProductAddonRelation();
+                $relations = $relations->where('addon_id', $model->id)->get();
+                $products = [];
+                foreach ($relations as $key => $relation) {
+                    $products[$key] = $this->product->where('id', $relation->product_id)->first()->name;
+                }
+                return implode(',', $products);
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('addons/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name')
+            ->orderColumns('name')
+            ->make();
     }
 
     /**
@@ -99,7 +97,6 @@ class AddonController extends Controller
                     }
                 }
             }
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -133,7 +130,6 @@ class AddonController extends Controller
             $relation = new ProductAddonRelation();
             $relation = $relation->where('addon_id', $id)->pluck('product_id')->toArray();
             $addon = $this->addon->where('id', $id)->first();
-
             return view('themes.default1.product.addon.edit', compact('product', 'addon', 'subscription', 'relation'));
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -152,23 +148,19 @@ class AddonController extends Controller
         try {
             $addon = $this->addon->where('id', $id)->first();
             $addon->fill($request->input())->save();
-
             $products = $request->input('products');
             $relation = new ProductAddonRelation();
             if (is_array($products)) {
                 $delete = $relation->where('addon_id', $id)->get();
-
                 foreach ($delete as $del) {
                     $del->delete();
                 }
-
                 foreach ($products as $product) {
                     if ($product) {
                         $relation->create(['addon_id' => $addon->id, 'product_id' => $product]);
                     }
                 }
             }
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -194,34 +186,34 @@ class AddonController extends Controller
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                         //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                     }
                 }
                 echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
                 //echo \Lang::get('message.select-a-row');
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Plugins\Paypal\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -32,17 +31,14 @@ class SettingsController extends Controller
                     $table->timestamps();
                 });
             }
-
             $paypal1 = new Paypal();
             //dd($ccavanue);
             $paypal = $paypal1->where('id', '1')->first();
-
             if (!$paypal) {
                 $paypal1->create(['id' => '1']);
             }
-            $path = app_path().'/Plugins/Paypal/views';
+            $path = app_path() . '/Plugins/Paypal/views';
             \View::addNamespace('plugins', $path);
-
             return view('plugins::settings', compact('paypal'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -52,20 +48,19 @@ class SettingsController extends Controller
     public function postSettings(Request $request)
     {
         $this->validate($request, [
-            'business'    => 'required',
-            'cmd'         => 'required',
-            'paypal_url'  => 'required|url',
-            'image_url'   => 'required',
+            'business' => 'required',
+            'cmd' => 'required',
+            'paypal_url' => 'required|url',
+            'image_url' => 'required',
             'success_url' => 'url',
-            'cancel_url'  => 'url',
-            'notify_url'  => 'url',
-            'currencies'  => 'required',
+            'cancel_url' => 'url',
+            'notify_url' => 'url',
+            'currencies' => 'required',
         ]);
         try {
             $ccavanue1 = new Paypal();
             $ccavanue = $ccavanue1->where('id', '1')->first();
             $ccavanue->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());

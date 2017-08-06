@@ -1,16 +1,16 @@
 @extends('themes.default1.layouts.front.myaccount_master')
 @section('title')
-Agora | Invoice
+  Agora | Invoice
 @stop
 @section('nav-invoice')
-active
+  active
 @stop
 
 @section('content')
 
-<h2 class="mb-none"> My Invoices</h2>
+  <h2 class="mb-none"> My Invoices</h2>
 
-<div class="col-md-12 pull-center">
+  <div class="col-md-12 pull-center">
     {!! Datatable::table()
     ->addColumn('Number','Date','Total','Action')
     ->setUrl('get-my-invoices') 
@@ -19,7 +19,7 @@ active
                 ])
     ->render() !!}
 
-</div>    
+  </div>
 
 
 @stop

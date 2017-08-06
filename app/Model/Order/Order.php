@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Order;
 
 use App\BaseModel;
@@ -10,7 +9,7 @@ class Order extends BaseModel
 {
     protected $table = 'orders';
     protected $fillable = ['client', 'order_status', 'invoice_item_id',
-        'serial_key', 'product', 'domain', 'subscription', 'price_override', 'qty', 'invoice_id', 'number', ];
+        'serial_key', 'product', 'domain', 'subscription', 'price_override', 'qty', 'invoice_id', 'number',];
 
     public function invoice()
     {
@@ -51,7 +50,6 @@ class Order extends BaseModel
     {
         $this->invoiceRelation()->delete();
         $this->subscription()->delete();
-
         parent::delete();
     }
 
@@ -65,7 +63,6 @@ class Order extends BaseModel
         $tz = \Auth::user()->timezone()->first()->name;
         $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $value);
         $d = $date->setTimezone($tz);
-
         return $d;
     }
 
@@ -73,7 +70,6 @@ class Order extends BaseModel
     {
         try {
             $decrypted = \Crypt::decrypt($value);
-
             return $decrypted;
         } catch (DecryptException $ex) {
             return $value;
@@ -86,7 +82,6 @@ class Order extends BaseModel
             if (ends_with($value, '/')) {
                 $value = substr_replace($value, '', -1, 0);
             }
-
             return $value;
         } catch (DecryptException $ex) {
             return $value;
@@ -108,7 +103,6 @@ class Order extends BaseModel
         if (!$domain) {
             $domain = $pieces['path'];
         }
-
         return strtolower($domain);
     }
 }

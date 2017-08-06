@@ -1,17 +1,17 @@
 @extends('themes.default1.layouts.front.master')
 @section('title')
-{{ucfirst($page->name)}}
+  {{ucfirst($page->name)}}
 @stop
 @section('page-header')
-{{ucfirst($page->name)}}
+  {{ucfirst($page->name)}}
 @stop
 @section('breadcrumb')
-<li><a href="{{url('home')}}">Home</a></li>
-<li class="active">{{ucfirst($page->name)}}</li>
+  <li><a href="{{url('home')}}">Home</a></li>
+  <li class="active">{{ucfirst($page->name)}}</li>
 @stop
-@section('main-class') 
-main
+@section('main-class')
+  main
 @stop
 @section('content')
-{!! $page->content !!}
+  {!! $page->content !!}
 @stop

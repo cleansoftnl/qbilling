@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Model\Common\Country;
@@ -19,7 +18,6 @@ class WelcomeController extends Controller
         $country = new Country();
         $country_iso2 = $this->request->get('country_id');
         $model = $country->where('country_code_char2', $country_iso2)->select('phonecode')->first();
-
         return $model->phonecode;
     }
 
@@ -30,18 +28,17 @@ class WelcomeController extends Controller
         if ($country_iso2 != 'IN') {
             $currency = 'USD';
         }
-
         return $currency;
     }
 
     public function countryCount()
     {
         $users = \App\User::
-                leftJoin('countries', 'users.country', '=', 'countries.country_code_char2')
-                ->select('countries.nicename as Country', \DB::raw('COUNT(users.id) as count'))
-                ->groupBy('users.country')
-                ->get()
-                ->sortByDesc('count');
+        leftJoin('countries', 'users.country', '=', 'countries.country_code_char2')
+            ->select('countries.nicename as Country', \DB::raw('COUNT(users.id) as count'))
+            ->groupBy('users.country')
+            ->get()
+            ->sortByDesc('count');
         echo '<style>
 table {
     font-family: arial, sans-serif;
@@ -62,7 +59,7 @@ tr:nth-child(even) {
         echo '<table>';
         echo '<tr><th>Country</th><th>Count</th><tr>';
         foreach ($users as $user) {
-            echo '<tr><td>'.$user->Country.'</td><td>'.$user->count.'</td></tr>';
+            echo '<tr><td>' . $user->Country . '</td><td>' . $user->count . '</td></tr>';
         }
         echo '</table>';
     }

@@ -3,9 +3,7 @@
  * The MIT License
  * Copyright (c) 2007 Andy Smith.
  */
-
 namespace App\Http\Controllers\Common\Twitter;
-
 class Consumer
 {
     /** @var string */
@@ -18,7 +16,7 @@ class Consumer
     /**
      * @param string $key
      * @param string $secret
-     * @param null   $callbackUrl
+     * @param null $callbackUrl
      */
     public function __construct($key, $secret, $callbackUrl = null)
     {

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Exceptions;
 
 use Exception;
@@ -41,7 +40,7 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Exception               $e
+     * @param \Exception $e
      *
      * @return \Illuminate\Http\Response
      */
@@ -49,7 +48,6 @@ class Handler extends ExceptionHandler
     {
         //dd($e);
         switch ($e) {
-
             case $e instanceof ModelNotFoundException:
                 return $this->renderException($e);
             default:
@@ -60,14 +58,12 @@ class Handler extends ExceptionHandler
     protected function renderException($e)
     {
         switch ($e) {
-
             case $e instanceof ModelNotFoundException:
-                return redirect('/')->with('fails', 'Please configure '.$e->getMessage());
+                return redirect('/')->with('fails', 'Please configure ' . $e->getMessage());
                 break;
-
             default:
                 return (new SymfonyDisplayer(config('app.debug')))
-                                ->createResponse($e);
+                    ->createResponse($e);
         }
     }
 
@@ -81,12 +77,10 @@ class Handler extends ExceptionHandler
      */
     public function render500($request, $e)
     {
-
         //$this->mail($request, $e);
         if (Config('app.debug') == true) {
             return parent::render($request, $e);
         }
-
         return view('errors.500');
     }
 
@@ -124,13 +118,11 @@ class Handler extends ExceptionHandler
                 return $this->render404($request, $e);
             case $e instanceof \Illuminate\Session\TokenMismatchException:
                 if ($request->ajax()) {
-                    return response()->json(['error'=>'Session timeout, refresh the page'], 500);
+                    return response()->json(['error' => 'Session timeout, refresh the page'], 500);
                 }
-
                 return redirect()->back()->with('fails', 'Session time out');
 
         }
-
         return $this->render500($request, $e);
     }
 
@@ -145,16 +137,13 @@ class Handler extends ExceptionHandler
         $mail = $setting_controller->smtp();
         $set = new \App\Model\Common\Setting();
         $setting = $set->find(1);
-
         if ($setting->error_log == 1 && $setting->error_email != '') {
             $s = \Mail::send('errors.report', ['e' => $e], function ($m) use ($setting) {
                 $m->from($setting->email, $setting->company);
-
                 $m->to($setting->error_email, 'Agora Error')->subject('Agora Invoicing Error');
             });
             //dd($s);
         }
-
         return 'success';
     }
 }

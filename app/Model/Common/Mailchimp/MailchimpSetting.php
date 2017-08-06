@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Common\Mailchimp;
 
 use App\BaseModel;

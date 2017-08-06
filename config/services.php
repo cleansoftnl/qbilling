@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -13,26 +11,21 @@ return [
     | to have a conventional place to find your various credentials.
     |
     */
-
     'mailgun' => [
         'domain' => '',
         'secret' => '',
     ],
-
     'mandrill' => [
         'secret' => '',
     ],
-
     'ses' => [
-        'key'    => '',
+        'key' => '',
         'secret' => '',
         'region' => 'us-east-1',
     ],
-
     'stripe' => [
-        'model'  => 'App\User',
-        'key'    => '',
+        'model' => 'App\User',
+        'key' => '',
         'secret' => '',
     ],
-
 ];

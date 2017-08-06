@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Licence;
 
 use App\Http\Controllers\Controller;
@@ -14,7 +13,6 @@ class ServiceController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('admin');
-
         $service = new Service();
         $this->service = $service;
     }
@@ -31,13 +29,13 @@ class ServiceController extends Controller
     public function GetServices()
     {
         return \Datatable::collection($this->service->get())
-                        ->showColumns('name')
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('services/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name')
-                        ->orderColumns('name')
-                        ->make();
+            ->showColumns('name')
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('services/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name')
+            ->orderColumns('name')
+            ->make();
     }
 
     public function create()
@@ -53,7 +51,6 @@ class ServiceController extends Controller
     {
         try {
             $this->service->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -64,7 +61,6 @@ class ServiceController extends Controller
     {
         try {
             $service = $this->service->where('id', $id)->first();
-
             return view('themes.default1.services.edit', compact('service'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -76,7 +72,6 @@ class ServiceController extends Controller
         try {
             $service = $this->service->where('id', $id)->first();
             $service->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());

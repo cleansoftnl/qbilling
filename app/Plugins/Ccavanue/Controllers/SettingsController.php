@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Plugins\Ccavanue\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -31,17 +30,14 @@ class SettingsController extends Controller
                     $table->timestamps();
                 });
             }
-
             $ccavanue1 = new Ccavanue();
             //dd($ccavanue);
             $ccavanue = $ccavanue1->where('id', '1')->first();
-
             if (!$ccavanue) {
                 $ccavanue1->create(['id' => '1']);
             }
-            $path = app_path().'/Plugins/Ccavanue/views';
+            $path = app_path() . '/Plugins/Ccavanue/views';
             \View::addNamespace('plugins', $path);
-
             return view('plugins::settings', compact('ccavanue'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -52,18 +48,17 @@ class SettingsController extends Controller
     {
         try {
             $this->validate($request, [
-                'merchant_id'  => 'required',
-                'access_code'  => 'required',
-                'working_key'  => 'required',
+                'merchant_id' => 'required',
+                'access_code' => 'required',
+                'working_key' => 'required',
                 'redirect_url' => 'required|url',
-                'cancel_url'   => 'required|url',
+                'cancel_url' => 'required|url',
                 'ccavanue_url' => 'required|url',
-                'currencies'   => 'required',
+                'currencies' => 'required',
             ]);
             $ccavanue1 = new Ccavanue();
             $ccavanue = $ccavanue1->where('id', '1')->first();
             $ccavanue->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());

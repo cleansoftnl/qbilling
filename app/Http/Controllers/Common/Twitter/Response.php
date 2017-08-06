@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\Common\Twitter;
-
 /**
  * The result of the most recent API request.
  *

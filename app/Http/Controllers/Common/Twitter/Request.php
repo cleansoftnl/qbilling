@@ -3,9 +3,7 @@
  * The MIT License
  * Copyright (c) 2007 Andy Smith.
  */
-
 namespace App\Http\Controllers\Common\Twitter;
-
 class Request
 {
     protected $parameters;
@@ -16,8 +14,8 @@ class Request
     /**
      * Constructor.
      *
-     * @param string     $httpMethod
-     * @param string     $httpUrl
+     * @param string $httpMethod
+     * @param string $httpUrl
      * @param array|null $parameters
      */
     public function __construct($httpMethod, $httpUrl, array $parameters = [])
@@ -32,10 +30,10 @@ class Request
      * pretty much a helper function to set up the request.
      *
      * @param Consumer $consumer
-     * @param Token    $token
-     * @param string   $httpMethod
-     * @param string   $httpUrl
-     * @param array    $parameters
+     * @param Token $token
+     * @param string $httpMethod
+     * @param string $httpUrl
+     * @param array $parameters
      *
      * @return Request
      */
@@ -45,19 +43,18 @@ class Request
         $httpMethod,
         $httpUrl,
         array $parameters = []
-    ) {
+    )
+    {
         $defaults = [
-            'oauth_version'      => self::$version,
-            'oauth_nonce'        => self::generateNonce(),
-            'oauth_timestamp'    => time(),
+            'oauth_version' => self::$version,
+            'oauth_nonce' => self::generateNonce(),
+            'oauth_timestamp' => time(),
             'oauth_consumer_key' => $consumer->key,
         ];
         if (null !== $token) {
             $defaults['oauth_token'] = $token->key;
         }
-
         $parameters = array_merge($defaults, $parameters);
-
         return new self($httpMethod, $httpUrl, $parameters);
     }
 
@@ -105,13 +102,11 @@ class Request
     {
         // Grab all parameters
         $params = $this->parameters;
-
         // Remove oauth_signature if present
         // Ref: Spec: 9.1.1 ("The oauth_signature parameter MUST be excluded.")
         if (isset($params['oauth_signature'])) {
             unset($params['oauth_signature']);
         }
-
         return Util::buildHttpQuery($params);
     }
 
@@ -131,9 +126,7 @@ class Request
             $this->getNormalizedHttpUrl(),
             $this->getSignableParameters(),
         ];
-
         $parts = Util::urlencodeRfc3986($parts);
-
         return implode('&', $parts);
     }
 
@@ -156,11 +149,9 @@ class Request
     public function getNormalizedHttpUrl()
     {
         $parts = parse_url($this->httpUrl);
-
         $scheme = $parts['scheme'];
         $host = strtolower($parts['host']);
         $path = $parts['path'];
-
         return "$scheme://$host$path";
     }
 
@@ -174,9 +165,8 @@ class Request
         $postData = $this->toPostdata();
         $out = $this->getNormalizedHttpUrl();
         if ($postData) {
-            $out .= '?'.$postData;
+            $out .= '?' . $postData;
         }
-
         return $out;
     }
 
@@ -209,10 +199,9 @@ class Request
                 throw new TwitterOAuthException('Arrays not supported in headers');
             }
             $out .= ($first) ? ' ' : ', ';
-            $out .= Util::urlencodeRfc3986($k).'="'.Util::urlencodeRfc3986($v).'"';
+            $out .= Util::urlencodeRfc3986($k) . '="' . Util::urlencodeRfc3986($v) . '"';
             $first = false;
         }
-
         return $out;
     }
 
@@ -226,8 +215,8 @@ class Request
 
     /**
      * @param SignatureMethod $signatureMethod
-     * @param Consumer        $consumer
-     * @param Token           $token
+     * @param Consumer $consumer
+     * @param Token $token
      */
     public function signRequest(SignatureMethod $signatureMethod, Consumer $consumer, Token $token = null)
     {
@@ -238,8 +227,8 @@ class Request
 
     /**
      * @param SignatureMethod $signatureMethod
-     * @param Consumer        $consumer
-     * @param Token           $token
+     * @param Consumer $consumer
+     * @param Token $token
      *
      * @return string
      */
@@ -253,6 +242,6 @@ class Request
      */
     public static function generateNonce()
     {
-        return md5(microtime().mt_rand());
+        return md5(microtime() . mt_rand());
     }
 }

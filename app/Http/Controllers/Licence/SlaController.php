@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Licence;
 
 use App\Http\Controllers\Controller;
@@ -28,22 +27,16 @@ class SlaController extends Controller
         $cart = new \App\Http\Controllers\Front\CheckoutController();
         $auth = ''; //$cart->GetXdeskAuthOrganization();
         $this->org = $auth;
-
         $sla = new Sla();
         $this->sla = $sla;
-
         $slaServiceRelation = new SlaServiceRelation();
         $this->slaServiceRelation = $slaServiceRelation;
-
         $service = new Service();
         $this->service = $service;
-
         $licence = new Licence();
         $this->licence = $licence;
-
         $organization = new Organization();
         $this->organization = $organization;
-
         $licencedOrganization = new LicencedOrganization();
         $this->licencedOrganization = $licencedOrganization;
     }
@@ -60,34 +53,30 @@ class SlaController extends Controller
     public function GetSlas()
     {
         return \Datatable::collection($this->sla->get())
-                        ->addColumn('licence_id', function ($model) {
-                            $licence_name = $this->licence->where('id', $model->licence_id)->first()->name;
-
-                            return $licence_name;
-                        })
-                        ->showColumns('name', 'description')
-                        ->addColumn('service', function ($model) {
-                            $serviceid = $this->slaServiceRelation->where('sla_id', $model->id)->first()->service_id;
-
-                            return $this->service->where('id', $serviceid)->first()->name;
-                        })
-                        ->addColumn('organization_id', function ($model) {
-                            $name = $this->organization->where('id', $model->organization_id)->where('type', 'client')->first()->name;
-
-                            return $name;
-                        })
-                        ->addColumn('service_provider_id', function ($model) {
-                            $name = $this->organization->where('id', $model->service_provider_id)->where('type', 'service_provider')->first()->name;
-
-                            return $name;
-                        })
-                        ->showColumns('start_date', 'end_date', 'grace_period')
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('slas/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name')
-                        ->orderColumns('name')
-                        ->make();
+            ->addColumn('licence_id', function ($model) {
+                $licence_name = $this->licence->where('id', $model->licence_id)->first()->name;
+                return $licence_name;
+            })
+            ->showColumns('name', 'description')
+            ->addColumn('service', function ($model) {
+                $serviceid = $this->slaServiceRelation->where('sla_id', $model->id)->first()->service_id;
+                return $this->service->where('id', $serviceid)->first()->name;
+            })
+            ->addColumn('organization_id', function ($model) {
+                $name = $this->organization->where('id', $model->organization_id)->where('type', 'client')->first()->name;
+                return $name;
+            })
+            ->addColumn('service_provider_id', function ($model) {
+                $name = $this->organization->where('id', $model->service_provider_id)->where('type', 'service_provider')->first()->name;
+                return $name;
+            })
+            ->showColumns('start_date', 'end_date', 'grace_period')
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('slas/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name')
+            ->orderColumns('name')
+            ->make();
     }
 
     public function create()
@@ -107,7 +96,6 @@ class SlaController extends Controller
                 $serviceProviders = [$this->org->id => $this->org->name];
             }
             $services = $this->service->lists('name', 'id')->toArray();
-
             return view('themes.default1.sla.create', compact('organizations', 'serviceProviders', 'services', 'licences'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -123,7 +111,6 @@ class SlaController extends Controller
                 $serviceprovider_id = $this->org->id;
             }
             $service_id = $request->input('service');
-
             $serviceprovider = $this->organization->where('id', $serviceprovider_id)->where('type', 'service_provider')->first();
             $licenced = $this->licencedOrganization->where('organization_id', $serviceprovider->id)->lists('number_of_slas', 'licence_name')->toArray();
             //dd($licenced);
@@ -134,12 +121,10 @@ class SlaController extends Controller
             $CountOfSlaCanCreate = array_sum($licenced);
             //dd($CountOfSlaCanCreate);
             $CountOfSlaCreated = $this->sla->where('service_provider_id', $serviceprovider->id)->count();
-
             //check if service provider has enough licence to create slas OR it is unlimited licence
             if ($CountOfSlaCanCreate > $CountOfSlaCreated || in_array('0', $licenced)) {
                 $this->sla->fill($request->input())->save();
                 $this->slaServiceRelation->create(['sla_id' => $this->sla->id, 'service_id' => $service_id]);
-
                 return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
             } else {
                 return redirect()->back()->with('fails', 'Licence Over to create Slas ! ');
@@ -166,7 +151,6 @@ class SlaController extends Controller
             }
             $services = $this->service->lists('name', 'id')->toArray();
             $sla = $this->sla->where('id', $id)->first();
-
             return view('themes.default1.sla.edit', compact('organizations', 'serviceProviders', 'services', 'sla', 'licences'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -178,12 +162,10 @@ class SlaController extends Controller
         try {
             $service = $this->slaServiceRelation->where('sla_id', $id)->first();
             $service->delete();
-
             $service_id = $request->input('service');
             $sla = $this->sla->where('id', $id)->first();
             $sla->fill($request->input())->save();
             $this->slaServiceRelation->create(['sla_id' => $id, 'service_id' => $service_id]);
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());

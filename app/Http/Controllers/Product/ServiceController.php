@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
@@ -16,8 +15,8 @@ class ServiceController extends Controller
         $this->middleware('admin');
         $product = new Product();
         $this->product = $product;
-//        $plan = new Plan();
-//        $this->plan = $plan;
+        //        $plan = new Plan();
+        //        $this->plan = $plan;
         $service = new Service();
         $this->service = $service;
     }
@@ -35,19 +34,19 @@ class ServiceController extends Controller
     public function GetServices()
     {
         return \Datatable::collection($this->service->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->showColumns('name')
-                        ->addColumn('plan', function ($model) {
-                            //return $this->product->plan()->name;
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('products/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name')
-                        ->orderColumns('name')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->showColumns('name')
+            ->addColumn('plan', function ($model) {
+                //return $this->product->plan()->name;
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('products/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name')
+            ->orderColumns('name')
+            ->make();
     }
 
     /**
@@ -70,7 +69,6 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
         $this->service->fill($request->input())->save();
-
         return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
     }
 
@@ -98,7 +96,6 @@ class ServiceController extends Controller
         $product = $this->product;
         $plan = $this->plan;
         $service = $this->service->where('id', $id)->first();
-
         return view('themes.default1.product.service.edit', compact('service', 'plan', 'addon'));
     }
 
@@ -113,7 +110,6 @@ class ServiceController extends Controller
     {
         $service = $this->service->where('id', $id)->first();
         $service->fill($request->input())->save();
-
         return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
     }
 
@@ -135,25 +131,25 @@ class ServiceController extends Controller
                 } else {
                     echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                     //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                 }
             }
             echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
         } else {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
             //echo \Lang::get('message.select-a-row');
         }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\Product;
 
 use App\Http\Requests\Request;
@@ -24,7 +23,7 @@ class BundleRequest extends Request
     public function rules()
     {
         return [
-            'name'    => 'required',
+            'name' => 'required',
             'items.*' => 'required',
         ];
     }

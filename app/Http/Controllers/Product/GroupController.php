@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
@@ -19,13 +18,10 @@ class GroupController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('admin');
-
         $group = new ProductGroup();
         $this->group = $group;
-
         $feature = new GroupFeatures();
         $this->feature = $feature;
-
         $config = new ConfigurableOption();
         $this->config = $config;
     }
@@ -47,27 +43,27 @@ class GroupController extends Controller
     public function GetGroups()
     {
         return \Datatable::collection($this->group->select('id', 'name')->where('id', '!=', 1)->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->showColumns('name')
-                        ->addColumn('features', function ($model) {
-                            $features = $this->feature->select('features')->where('group_id', $model->id)->get();
-                            //dd($features);
-                            $result = [];
-                            foreach ($features as $key => $feature) {
-                                //dd($feature);
-                                $result[$key] = $feature->features;
-                            }
-                            //dd($result);
-                            return implode(',', $result);
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('groups/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name')
-                        ->orderColumns('name')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->showColumns('name')
+            ->addColumn('features', function ($model) {
+                $features = $this->feature->select('features')->where('group_id', $model->id)->get();
+                //dd($features);
+                $result = [];
+                foreach ($features as $key => $feature) {
+                    //dd($feature);
+                    $result[$key] = $feature->features;
+                }
+                //dd($result);
+                return implode(',', $result);
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('groups/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name')
+            ->orderColumns('name')
+            ->make();
     }
 
     /**
@@ -93,21 +89,17 @@ class GroupController extends Controller
     {
         try {
             $this->group->fill($request->input())->save();
-
             $features = $request->input('features');
             foreach ($features as $feature) {
                 $this->feature->create(['group_id' => $this->group->id, 'features' => $feature['name']]);
             }
-
             $values = $request->input('value');
             $prices = $request->input('price');
             $title = $request->input('title');
             $type = $request->input('type');
-
             for ($i = 0; $i < count($prices); $i++) {
                 $this->config->create(['group_id' => $this->group->id, 'type' => $type, 'title' => $title, 'options' => $values[$i]['name'], 'price' => $prices[$i]['name']]);
             }
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -140,7 +132,6 @@ class GroupController extends Controller
             $configs = $this->config->select('price', 'options')->where('group_id', $id)->get();
             $title = $this->config->where('group_id', $id)->first()->title;
             $type = $this->config->where('group_id', $id)->first()->type;
-
             return view('themes.default1.product.group.edit', compact('group', 'features', 'configs', 'title', 'type'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -172,14 +163,12 @@ class GroupController extends Controller
                 }
             }
             $features = $request->input('features');
-
             foreach ($features as $feature) {
                 $this->feature->create(['group_id' => $group->id, 'features' => $feature['name']]);
             }
             /*
              * Configurations
              */
-
             $deletes = $this->config->where('group_id', $id)->get();
             if (!empty($deletes)) {
                 foreach ($deletes as $delete) {
@@ -188,16 +177,13 @@ class GroupController extends Controller
                     }
                 }
             }
-
             $values = $request->input('value');
             $prices = $request->input('price');
             $title = $request->input('title');
             $type = $request->input('type');
-
             for ($i = 0; $i < count($prices); $i++) {
                 $this->config->create(['group_id' => $group->id, 'type' => $type, 'title' => $title, 'options' => $values[$i]['name'], 'price' => $prices[$i]['name']]);
             }
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -217,40 +203,39 @@ class GroupController extends Controller
             if (!empty($ids)) {
                 foreach ($ids as $id) {
                     $group = $this->group->where('id', $id)->first();
-
                     if ($group) {
                         $group->delete();
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                         //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                     }
                 }
                 echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
                 //echo \Lang::get('message.select-a-row');
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }

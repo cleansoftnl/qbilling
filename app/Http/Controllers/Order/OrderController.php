@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
@@ -31,31 +30,22 @@ class OrderController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('admin');
-
         $order = new Order();
         $this->order = $order;
-
         $user = new User();
         $this->user = $user;
-
         $promotion = new Promotion();
         $this->promotion = $promotion;
-
         $product = new Product();
         $this->product = $product;
-
         $subscription = new Subscription();
         $this->subscription = $subscription;
-
         $invoice = new Invoice();
         $this->invoice = $invoice;
-
         $invoice_items = new InvoiceItem();
         $this->invoice_items = $invoice_items;
-
         $plan = new Plan();
         $this->plan = $plan;
-
         $price = new Price();
         $this->price = $price;
     }
@@ -68,14 +58,13 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         //        $validator = \Validator::make($request->all(), [
-//                    'domain' => 'url',
-//        ]);
-
-//        if ($validator->fails()) {
-//            return redirect('orders')
-//                            ->withErrors($validator)
-//                            ->withInput();
-//        }
+        //                    'domain' => 'url',
+        //        ]);
+        //        if ($validator->fails()) {
+        //            return redirect('orders')
+        //                            ->withErrors($validator)
+        //                            ->withInput();
+        //        }
         try {
             $products = $this->product->where('id', '!=', 1)->lists('name', 'id')->toArray();
             $order_no = $request->input('order_no');
@@ -84,7 +73,6 @@ class OrderController extends Controller
             $from = $request->input('from');
             $till = $request->input('till');
             $domain = $request->input('domain');
-
             return view('themes.default1.order.index', compact('products', 'order_no', 'product_id', 'expiry', 'from', 'till', 'domain'));
         } catch (\Exception $e) {
             return redirect('orders')->with('fails', $e->getMessage());
@@ -103,51 +91,47 @@ class OrderController extends Controller
         //return \Datatable::query($this->order->select('id', 'created_at', 'client',
         //'price_override', 'order_status', 'number', 'serial_key'))
         return \Datatable::Collection($query->get())
-                        ->addColumn('#', function ($model) {
-                            return "<input type='checkbox' value=".$model->id.' name=select[] id=check>';
-                        })
-                        ->addColumn('date', function ($model) {
-                            $date = $model->created_at;
-
-                            return "<span style='display:none'>$model->id</span>".$date->format('l, F j, Y H:m A');
-                        })
-                        ->addColumn('client', function ($model) {
-                            $user = $this->user->where('id', $model->client)->first();
-                            $first = $user->first_name;
-                            $last = $user->last_name;
-                            $id = $user->id;
-
-                            return '<a href='.url('clients/'.$id).'>'.ucfirst($first).' '.ucfirst($last).'<a>';
-                        })
-                        ->showColumns('number', 'price_override', 'order_status')
-                        ->addColumn('ends_at', function ($model) {
-                            $end = '--';
-                            $ends = $model->subscription()->first();
-                            if ($ends) {
-                                if ($ends->ends_at != '0000-00-00 00:00:00') {
-                                    $end = $ends->ends_at;
-                                    $date = date_create($end);
-                                    $end = date_format($date, 'l, F j, Y H:m A');
-                                }
-                            }
-
-                            return $end;
-                        })
-                        ->addColumn('action', function ($model) {
-                            $sub = $model->subscription()->first();
-                            $status = $this->checkInvoiceStatusByOrderId($model->id);
-                            $url = '';
-                            if ($status == 'success') {
-                                if ($sub) {
-                                    $url = '<a href='.url('renew/'.$sub->id)." class='btn btn-sm btn-primary'>Renew</a>";
-                                }
-                            }
-
-                            return '<p><a href='.url('orders/'.$model->id)." class='btn btn-sm btn-primary'>View</a> $url</p>";
-                        })
-                        ->searchColumns('order_status', 'number', 'price_override', 'client', 'ends_at')
-                        ->orderColumns('client', 'date', 'number', 'price_override')
-                        ->make();
+            ->addColumn('#', function ($model) {
+                return "<input type='checkbox' value=" . $model->id . ' name=select[] id=check>';
+            })
+            ->addColumn('date', function ($model) {
+                $date = $model->created_at;
+                return "<span style='display:none'>$model->id</span>" . $date->format('l, F j, Y H:m A');
+            })
+            ->addColumn('client', function ($model) {
+                $user = $this->user->where('id', $model->client)->first();
+                $first = $user->first_name;
+                $last = $user->last_name;
+                $id = $user->id;
+                return '<a href=' . url('clients/' . $id) . '>' . ucfirst($first) . ' ' . ucfirst($last) . '<a>';
+            })
+            ->showColumns('number', 'price_override', 'order_status')
+            ->addColumn('ends_at', function ($model) {
+                $end = '--';
+                $ends = $model->subscription()->first();
+                if ($ends) {
+                    if ($ends->ends_at != '0000-00-00 00:00:00') {
+                        $end = $ends->ends_at;
+                        $date = date_create($end);
+                        $end = date_format($date, 'l, F j, Y H:m A');
+                    }
+                }
+                return $end;
+            })
+            ->addColumn('action', function ($model) {
+                $sub = $model->subscription()->first();
+                $status = $this->checkInvoiceStatusByOrderId($model->id);
+                $url = '';
+                if ($status == 'success') {
+                    if ($sub) {
+                        $url = '<a href=' . url('renew/' . $sub->id) . " class='btn btn-sm btn-primary'>Renew</a>";
+                    }
+                }
+                return '<p><a href=' . url('orders/' . $model->id) . " class='btn btn-sm btn-primary'>View</a> $url</p>";
+            })
+            ->searchColumns('order_status', 'number', 'price_override', 'client', 'ends_at')
+            ->orderColumns('client', 'date', 'number', 'price_override')
+            ->make();
     }
 
     /**
@@ -162,7 +146,6 @@ class OrderController extends Controller
             $product = $this->product->lists('name', 'id')->toArray();
             $subscription = $this->subscription->lists('name', 'id')->toArray();
             $promotion = $this->promotion->lists('code', 'id')->toArray();
-
             return view('themes.default1.order.create', compact('clients', 'product', 'subscription', 'promotion'));
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -178,19 +161,15 @@ class OrderController extends Controller
     {
         try {
             $this->order->fill($request->input())->save();
-
             if ($request->input('confirmation') == 1) {
                 // do order conformation
             }
-
             if ($request->input('invoice') == 1) {
                 // Generate Invoice
             }
-
             if ($request->input('email') == 1) {
                 // send email to the client
             }
-
             return redirect()->back()->with('success', \Lang::get('message.saved-successfully'));
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -216,7 +195,6 @@ class OrderController extends Controller
             }
             $invoiceItems = $this->invoice_items->where('invoice_id', $invoiceid)->get();
             $user = $this->user->find($invoice->user_id);
-
             return view('themes.default1.order.show', compact('invoiceItems', 'invoice', 'user', 'order', 'subscription'));
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -238,7 +216,6 @@ class OrderController extends Controller
             $product = $this->product->lists('name', 'id')->toArray();
             $subscription = $this->subscription->lists('name', 'id')->toArray();
             $promotion = $this->promotion->lists('code', 'id')->toArray();
-
             return view('themes.default1.order.edit', compact('clients', 'product', 'subscription', 'promotion', 'order'));
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -257,7 +234,6 @@ class OrderController extends Controller
         try {
             $order = $this->order->where('id', $id)->first();
             $order->fill($request->input())->save();
-
             return redirect()->back()->with('success', \Lang::get('message.updated-successfully'));
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -283,34 +259,34 @@ class OrderController extends Controller
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                         //echo \Lang::get('message.no-record') . '  [id=>' . $id . ']';
                     }
                 }
                 echo "<div class='alert alert-success alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.success').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.success') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.deleted-successfully').'
+                        ' . \Lang::get('message.deleted-successfully') . '
                 </div>';
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
                 //echo \Lang::get('message.select-a-row');
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> '.\Lang::get('message.failed').'
+                    <b>" . \Lang::get('message.alert') . '!</b> ' . \Lang::get('message.failed') . '
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }
@@ -327,7 +303,6 @@ class OrderController extends Controller
         try {
             //dd($request);
             $invoiceid = $request->input('invoiceid');
-
             $execute = $this->executeOrder($invoiceid);
             //dd($execute);
             if ($execute == 'success') {
@@ -370,18 +345,17 @@ class OrderController extends Controller
                         //$plan_id = $this->getPrice($product)->subscription;
                         $domain = $item->domain;
                         $plan_id = $this->plan($item->id);
-
                         $order = $this->order->create([
-                            'invoice_id'      => $invoiceid,
+                            'invoice_id' => $invoiceid,
                             'invoice_item_id' => $item->id,
-                            'client'          => $user_id,
-                            'order_status'    => $order_status,
-                            'serial_key'      => $serial_key,
-                            'product'         => $product,
-                            'price_override'  => $price,
-                            'qty'             => $qty,
-                            'domain'          => $domain,
-                            'number'          => $this->generateNumber(),
+                            'client' => $user_id,
+                            'order_status' => $order_status,
+                            'serial_key' => $serial_key,
+                            'product' => $product,
+                            'price_override' => $price,
+                            'qty' => $qty,
+                            'domain' => $domain,
+                            'number' => $this->generateNumber(),
                         ]);
                         $this->addOrderInvoiceRelation($invoiceid, $order->id);
                         if ($this->checkOrderCreateSubscription($order->id) == true) {
@@ -391,7 +365,6 @@ class OrderController extends Controller
                     }
                 }
             }
-
             return 'success';
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage());
@@ -431,7 +404,7 @@ class OrderController extends Controller
                     $ends_at = '';
                 }
                 $user_id = $this->order->find($orderid)->client;
-                $this->subscription->create(['user_id' => $user_id, 'plan_id' => $planid, 'order_id' => $orderid, 'ends_at' => $ends_at, 'version'=>$version]);
+                $this->subscription->create(['user_id' => $user_id, 'plan_id' => $planid, 'order_id' => $orderid, 'ends_at' => $ends_at, 'version' => $version]);
             }
         } catch (\Exception $ex) {
             //dd($ex);
@@ -490,7 +463,6 @@ class OrderController extends Controller
         try {
             $product = $this->product->where('id', $product_id)->first();
             $product_type = $product->type;
-
             return $this->generateSerialKey($product_type);
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage());
@@ -513,7 +485,6 @@ class OrderController extends Controller
                 $str = str_random(16);
                 $str = strtoupper($str);
                 $str = \Crypt::encrypt($str);
-
                 return $str;
             }
         } catch (\Exception $ex) {
@@ -533,8 +504,8 @@ class OrderController extends Controller
     public function domainChange(Request $request)
     {
         //        $this->validate($request, [
-//            'domain' => 'url',
-//        ]);
+        //            'domain' => 'url',
+        //        ]);
         $domain = $request->input('domain');
         $id = $request->input('id');
         $order = $this->order->find($id);
@@ -551,7 +522,6 @@ class OrderController extends Controller
             } else {
                 return redirect()->back()->with('fails', 'Can not delete');
             }
-
             return redirect()->back()->with('success', "Order $order->number has Deleted Successfully");
         } catch (\Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
@@ -561,7 +531,7 @@ class OrderController extends Controller
     public function advanceSearch($order_no = '', $product_id = '', $expiry = '', $from = '', $till = '', $domain = '')
     {
         $join = $this->order
-                ->leftJoin('subscriptions', 'orders.id', '=', 'subscriptions.order_id');
+            ->leftJoin('subscriptions', 'orders.id', '=', 'subscriptions.order_id');
         if ($order_no) {
             $join = $join->where('number', $order_no);
         }
@@ -569,7 +539,7 @@ class OrderController extends Controller
             $join = $join->where('product', $product_id);
         }
         if ($expiry) {
-            $join = $join->where('ends_at', 'LIKE', '%'.$expiry.'%');
+            $join = $join->where('ends_at', 'LIKE', '%' . $expiry . '%');
         }
         if ($from) {
             $fromdate = date_create($from);
@@ -579,7 +549,6 @@ class OrderController extends Controller
                 $todate = date_create($till);
                 $tills = date_format($todate, 'Y-m-d H:m:i');
             }
-
             $join = $join->whereBetween('orders.created_at', [$from, $tills]);
         }
         if ($till) {
@@ -590,18 +559,15 @@ class OrderController extends Controller
                 $fromdate = date_create($from);
                 $froms = date_format($fromdate, 'Y-m-d H:m:i');
             }
-
             $join = $join->whereBetween('orders.created_at', [$froms, $till]);
         }
         if ($domain) {
             if (str_finish($domain, '/')) {
                 $domain = substr_replace($domain, '', -1, 0);
             }
-            $join = $join->where('domain', 'LIKE', '%'.$domain.'%');
+            $join = $join->where('domain', 'LIKE', '%' . $domain . '%');
         }
-
         $join = $join->select('orders.id', 'orders.created_at', 'client', 'price_override', 'order_status', 'number', 'serial_key');
-
         return $join;
     }
 
@@ -613,7 +579,6 @@ class OrderController extends Controller
             if ($item) {
                 $planid = $item->plan_id;
             }
-
             return $planid;
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage());
@@ -634,7 +599,6 @@ class OrderController extends Controller
                     }
                 }
             }
-
             return $status;
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage());
@@ -657,7 +621,6 @@ class OrderController extends Controller
                 }
             }
         }
-
         return $result;
     }
 
@@ -684,14 +647,14 @@ class OrderController extends Controller
         $subject = $template->name;
         $data = $template->data;
         $replace = [
-            'name'        => $user->first_name.' '.$user->last_name,
+            'name' => $user->first_name . ' ' . $user->last_name,
             'downloadurl' => $downloadurl,
-            'invoiceurl'  => $invoiceurl,
-            'product'     => $product,
-            'number'      => $order->number,
-            'expiry'      => $this->expiry($orderid),
-            'url'         => $this->renew($orderid),
-            ];
+            'invoiceurl' => $invoiceurl,
+            'product' => $product,
+            'number' => $order->number,
+            'expiry' => $this->expiry($orderid),
+            'url' => $this->renew($orderid),
+        ];
         $type = '';
         if ($template) {
             $type_id = $template->type;
@@ -701,7 +664,6 @@ class OrderController extends Controller
         //dd($type);
         $templateController = new \App\Http\Controllers\Common\TemplateController();
         $mail = $templateController->mailing($from, $to, $data, $subject, $replace, $type);
-
         return $mail;
     }
 
@@ -710,8 +672,7 @@ class OrderController extends Controller
         $orders = new Order();
         $order = $orders->where('id', $orderid)->first();
         $invoiceid = $order->invoice_id;
-        $url = url('my-invoice/'.$invoiceid);
-
+        $url = url('my-invoice/' . $invoiceid);
         return $url;
     }
 
@@ -721,8 +682,7 @@ class OrderController extends Controller
         $order = $orders->where('id', $orderid)->first();
         $invoice = $this->invoice->find($order->invoice_id);
         $number = $invoice->number;
-        $url = url('download/'.$userid.'/'.$number);
-
+        $url = url('download/' . $userid . '/' . $number);
         return $url;
     }
 
@@ -731,14 +691,12 @@ class OrderController extends Controller
         $invoice_items = new InvoiceItem();
         $invoice_item = $invoice_items->find($itemid);
         $product = $invoice_item->product_name;
-
         return $product;
     }
 
     public function subscription($orderid)
     {
         $sub = $this->subscription->where('order_id', $orderid)->first();
-
         return $sub;
     }
 
@@ -748,7 +706,6 @@ class OrderController extends Controller
         if ($sub) {
             return $sub->ends_at;
         }
-
         return '';
     }
 

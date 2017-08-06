@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -20,13 +19,12 @@ class PasswordController extends Controller
       | explore this trait and override any methods you wish to tweak.
       |
      */
-
-use ResetsPasswords;
+    use ResetsPasswords;
 
     /**
      * Create a new password controller instance.
      *
-     * @param \Illuminate\Contracts\Auth\Guard          $auth
+     * @param \Illuminate\Contracts\Auth\Guard $auth
      * @param \Illuminate\Contracts\Auth\PasswordBroker $passwords
      *
      * @return void
@@ -57,7 +55,6 @@ use ResetsPasswords;
         if (is_null($token)) {
             throw new NotFoundHttpException();
         }
-
         return view('themes.default1.front.auth.reset')->with('token', $token);
     }
 
@@ -86,19 +83,18 @@ use ResetsPasswords;
             if ($user) {
                 $user->password = \Hash::make($pass);
                 $user->save();
-
                 return redirect('auth/login')->with('success', 'You have successfully changed your password');
             } else {
                 return redirect()->back()
-                                ->withInput($request->only('email'))
-                                ->withErrors([
-                                    'email' => 'Invalid email', ]);
+                    ->withInput($request->only('email'))
+                    ->withErrors([
+                        'email' => 'Invalid email',]);
             }
         } else {
             return redirect()->back()
-                            ->withInput($request->only('email'))
-                            ->withErrors([
-                                'email' => 'Invalid email', ]);
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'Invalid email',]);
         }
     }
 
@@ -121,7 +117,6 @@ use ResetsPasswords;
             $activate = $password->create(['email' => $email, 'token' => $token]);
             $token = $activate->token;
         }
-
         $url = url("password/reset/$token");
         $user = new \App\User();
         $user = $user->where('email', $email)->first();
@@ -139,7 +134,7 @@ use ResetsPasswords;
         $to = $user->email;
         $subject = $template->name;
         $data = $template->data;
-        $replace = ['name' => $user->first_name.' '.$user->last_name, 'url' => $url];
+        $replace = ['name' => $user->first_name . ' ' . $user->last_name, 'url' => $url];
         $type = '';
         if ($template) {
             $type_id = $template->type;
@@ -148,7 +143,6 @@ use ResetsPasswords;
         }
         $templateController = new \App\Http\Controllers\Common\TemplateController();
         $mail = $templateController->mailing($from, $to, $data, $subject, $replace, $type);
-
         return redirect()->back()->with('success', "Reset instructions have been mailed to $to
 Be sure to check your Junk folder if you do not see an email from us in your Inbox within a few minutes.");
     }
